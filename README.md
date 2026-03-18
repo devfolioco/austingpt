@@ -1,37 +1,29 @@
-# JesseGPT
+# AustinGPT
 
-https://github.com/user-attachments/assets/f229628b-1405-40a3-9796-60b59983970e
-
-### Choose your Jesse
+### Choose your Austin
 
 <table>
   <tr>
     <td width="50%" align="center">
-      <h4>JesseGPT</h4>
-      <p>The relentlessly optimistic Jesse Pollak.</p>
-      <p>Sees massive potential everywhere, bursting with Onchain Summer energy, & ready to hype your vision to the moon.</p>
+      <h4>AustinGPT</h4>
+      <p>The enthusiastic builder mentor.</p>
+      <p>Sees a buidler in everyone, bursting with hackathon energy, & ready to help you ship your first prototype.</p>
       <div style="text-align: center;">
-        <img src="/assets/mellow-jesse.gif" width=150px>
+        <img src="/assets/mellow-austin.gif" width=150px>
       </div>
     </td>
     <td width="50%" align="center">
-      <h4>Supabald JesseGPT</h4>
-      <p>The brutally honest Jesse Pollak.</p>
-      <p>Cuts through the hype, challenges every premise, & believes great ideas must survive intense scrutiny to succeed.</p>
+      <h4>Tough Love AustinGPT</h4>
+      <p>The tough-love builder mentor.</p>
+      <p>Demands you understand the fundamentals, challenges every abstraction, & believes great builders explain things simply.</p>
       <div style="text-align: center;">
-        <img src="/assets/critical-jesse.gif" width=150px>
+        <img src="/assets/critical-austin.gif" width=150px>
       </div>
     </td>
   </tr>
 </table>
 
-Last year, we gave you [Supabald Jesse](https://letsgetjessebald.com/), a pixelated, cool-aura oracle who left the chain and entered your wallets.
-
-This year, Jesse’s back. Not as a meme. 
-
-But as **an AI**.
-
-Say gm to [JesseGPT](https://jessegpt.xyz/) - your onchain feedback buddy, Base-pilled mentor, and hype generator all rolled into one. Built for the latest cohort of [Base Batches 2025](https://basebatches.xyz/), JesseGPT is trained to channel the spirit (and tweets) of Jesse Pollak, CEO of Base, and deliver hot takes on your project submission.
+Say gm to [AustinGPT](https://austingpt.xyz/) — your builder mentor, Ethereum educator, and hackathon hype machine all rolled into one. AustinGPT is trained to channel the spirit (and tweets) of Austin Griffith, builder at the Ethereum Foundation and founder of BuidlGuidl, and deliver hands-on feedback on your project.
 
 ---
 
@@ -106,9 +98,9 @@ https://elevenlabs.io/blog/how-to-clone-voice
 
 # Contributing
 
-Feel free to open [issues](https://github.com/devfolioco/jessegpt/issues/new/choose) and [pull requests](https://github.com/devfolioco/jessegpt/pulls)!
+Feel free to open [issues](https://github.com/devfolioco/austingpt/issues/new/choose) and [pull requests](https://github.com/devfolioco/austingpt/pulls)!
 
-## Contributors ✨
+## Contributors
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 
@@ -118,11 +110,11 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <table>
   <tbody>
     <tr>
-      <td align="center" valign="top" width="14.28%"><a href="http://swarnimwalavalkar.com/"><img src="https://avatars.githubusercontent.com/u/38808472?v=4?s=100" width="100px;" alt="Swarnim Walavalkar"/><br /><sub><b>Swarnim Walavalkar</b></sub></a><br /><a href="https://github.com/devfolioco/jessegpt/commits?author=SwarnimWalavalkar" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://prathamvaidya.in"><img src="https://avatars.githubusercontent.com/u/61202986?v=4?s=100" width="100px;" alt="Pratham Vaidya"/><br /><sub><b>Pratham Vaidya</b></sub></a><br /><a href="https://github.com/devfolioco/jessegpt/commits?author=prathamVaidya" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://preetjdp.dev/"><img src="https://avatars.githubusercontent.com/u/27439197?v=4?s=100" width="100px;" alt="Preet Parekh"/><br /><sub><b>Preet Parekh</b></sub></a><br /><a href="https://github.com/devfolioco/jessegpt/commits?author=preetjdp" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://swarnimwalavalkar.com/"><img src="https://avatars.githubusercontent.com/u/38808472?v=4?s=100" width="100px;" alt="Swarnim Walavalkar"/><br /><sub><b>Swarnim Walavalkar</b></sub></a><br /><a href="https://github.com/devfolioco/austingpt/commits?author=SwarnimWalavalkar" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://prathamvaidya.in"><img src="https://avatars.githubusercontent.com/u/61202986?v=4?s=100" width="100px;" alt="Pratham Vaidya"/><br /><sub><b>Pratham Vaidya</b></sub></a><br /><a href="https://github.com/devfolioco/austingpt/commits?author=prathamVaidya" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://preetjdp.dev/"><img src="https://avatars.githubusercontent.com/u/27439197?v=4?s=100" width="100px;" alt="Preet Parekh"/><br /><sub><b>Preet Parekh</b></sub></a><br /><a href="https://github.com/devfolioco/austingpt/commits?author=preetjdp" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://faradayfury.webflow.io"><img src="https://avatars.githubusercontent.com/u/126873863?v=4?s=100" width="100px;" alt="Anish Dhiman"/><br /><sub><b>Anish Dhiman</b></sub></a><br /><a href="#design-faradayfury" title="Design">🎨</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="http://bio.link/ashwinexe"><img src="https://avatars.githubusercontent.com/u/53075480?v=4?s=100" width="100px;" alt="Ashwin Kumar Uppala"/><br /><sub><b>Ashwin Kumar Uppala</b></sub></a><br /><a href="https://github.com/devfolioco/jessegpt/commits?author=ashwinexe" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://bio.link/ashwinexe"><img src="https://avatars.githubusercontent.com/u/53075480?v=4?s=100" width="100px;" alt="Ashwin Kumar Uppala"/><br /><sub><b>Ashwin Kumar Uppala</b></sub></a><br /><a href="https://github.com/devfolioco/austingpt/commits?author=ashwinexe" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>
@@ -136,4 +128,4 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 ## License
 
-[![License](https://img.shields.io/github/license/devfolioco/jessegpt#reload)](https://github.com/devfolioco/jessegpt/blob/main/LICENSE)
+[![License](https://img.shields.io/github/license/devfolioco/austingpt#reload)](https://github.com/devfolioco/austingpt/blob/main/LICENSE)

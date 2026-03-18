@@ -36,7 +36,7 @@ def save_conversation(
 
     try:
         response = requests.post(
-            f"{datalayer_base_url}miscellaneous/jessegpt/conversations/{room_id}",
+            f"{datalayer_base_url}miscellaneous/austingpt/conversations/{room_id}",
             json={
                 "messages": transcript,
                 "has_enough_information": has_enough_information,
