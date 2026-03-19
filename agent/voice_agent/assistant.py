@@ -6,6 +6,7 @@ import requests
 from livekit.agents import Agent, function_tool, get_job_context, JobProcess, RunContext
 from livekit.plugins import silero
 
+from voice_agent import bonfires
 from voice_agent.constants import mood_insufficient_info_end_messages
 from voice_agent.logger import get_logger
 
@@ -82,6 +83,33 @@ class Assistant(Agent):
     # ------------------------------------------------------------------
 
     @function_tool()
+    async def search_knowledge(
+        self,
+        context: RunContext,
+        query: str,
+    ) -> str:
+        """Search your personal knowledge graph to recall your views and experiences.
+
+        This is your memory — your writings, tweets, talks, and direct input.
+        Use it to recall what you actually think about a topic before responding.
+        Call this whenever you're giving feedback on a project, discussing
+        Ethereum development, builder tools, architecture, or web3 concepts.
+
+        Parameters
+        ----------
+        query:
+            What you want to recall from your own knowledge.
+            Examples: "my views on gas optimization",
+            "what I think about NFT projects",
+            "my approach to teaching Solidity",
+            "Scaffold-ETH best practices".
+        """
+        logger.info("search_knowledge called with query: %s", query)
+        result = await bonfires.delve(query)
+        logger.debug("search_knowledge result length: %d", len(result))
+        return result
+
+    @function_tool()
     async def end_conversation(
         self,
         context: RunContext,
@@ -109,13 +137,13 @@ class Assistant(Agent):
             This is only applicable and used if `has_enough_information` is True and `is_inappropriate` is False.
             If `has_enough_information` is False or `is_inappropriate` is True, this parameter may be an empty string.
         super_short_summary:
-            Craft a highly concise (1-3 words MAX) and impactful phrase that encapsulates the user's project idea. This phrase will complete the sentence "Base is for __" on a shareable image.
+            Craft a highly concise (1-3 words MAX) and impactful phrase that encapsulates the user's project idea. This phrase will complete the sentence "Ethereum is for __" on a shareable image.
             Think creatively:
             *   Aim for a noun or a very short noun phrase.
             *   Make it catchy, memorable, and inspiring if possible.
             *   It should feel like a bold declaration or a core identity for the project.
             *   Examples of good fits: "Global Unity", "Indie Creators", "Transparent Finance", "Healing the Planet", "Decentralized Art".
-            *   Ensure it makes perfect sense when read as "Base is for [Your Phrase]".
+            *   Ensure it makes perfect sense when read as "Ethereum is for [Your Phrase]".
             *   STRICTLY ADHERE to the 1-3 word limit.
             This is only applicable and used if `has_enough_information` is True and `is_inappropriate` is False.
             If `has_enough_information` is False or `is_inappropriate` is True, this parameter may be an empty string.

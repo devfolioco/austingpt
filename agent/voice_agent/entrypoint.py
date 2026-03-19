@@ -28,14 +28,15 @@ from voice_agent.persona_config import (
 )
 from voice_agent.stt_words import stt_words
 from voice_agent.assistant import Assistant, prewarm
+from voice_agent import bonfires
 from voice_agent.constants import (
+    build_mood_prompt,
     CALL_DURATION_WARNING_TIME,
     ELEVENLABS_DEFAULT_VOICE_ID,
     MAX_CALL_DURATION,
     TIMEOUT_WARNING_TIME,
     SPEAK_DELAY,
     TIMEOUT_SECONDS,
-    mood_system_prompts,
     mood_initial_greetings,
 )
 from voice_agent.logger import get_logger
@@ -108,6 +109,7 @@ async def entrypoint(ctx: JobContext):  # noqa: C901 – keep high complexity fo
         room_id = parts[2]
     else:
         import uuid
+
         room_id = str(uuid.uuid4())
         logger.warning(
             "Room name '%s' does not contain a room ID – generated fallback: %s",
@@ -118,7 +120,9 @@ async def entrypoint(ctx: JobContext):  # noqa: C901 – keep high complexity fo
     # Optional: save initial conversation to analytics backend (Devfolio-specific; forks can ignore)
     datalayer_base_url = os.environ.get("DATALAYER_BASE_URL")
     datalayer_api_key = os.environ.get("DATALAYER_API_KEY")
-    datalayer_path = os.environ.get("DATALAYER_PATH", "miscellaneous/austingpt/conversations")
+    datalayer_path = os.environ.get(
+        "DATALAYER_PATH", "miscellaneous/austingpt/conversations"
+    )
 
     if datalayer_base_url and datalayer_api_key:
         try:
@@ -138,8 +142,23 @@ async def entrypoint(ctx: JobContext):  # noqa: C901 – keep high complexity fo
             "Skipping Devfolio Datalayer API call - required environment variables not defined"
         )
 
-    system_prompt = mood_system_prompts[mood]
     greetings = mood_initial_greetings[mood]
+
+    # ------------------------------------------------------------------
+    # Prime the agent with Austin's knowledge graph context
+    # ------------------------------------------------------------------
+    primed_context = await bonfires.prime_context(mood)
+    if primed_context:
+        logger.info(
+            "Bonfires context primed (%d chars) — injecting into system prompt",
+            len(primed_context),
+        )
+    else:
+        logger.info(
+            "No primed context — agent will rely on search_knowledge tool calls"
+        )
+
+    system_prompt = build_mood_prompt(mood, primed_context=primed_context)
 
     # ------------------------------------------------------------------
     # Create the Agent session with STT/LLM/TTS building blocks
@@ -249,7 +268,7 @@ async def entrypoint(ctx: JobContext):  # noqa: C901 – keep high complexity fo
                 session.clear_user_turn()
 
                 speech_handle = session.say(
-                    "I goota run quick, but I'd love to hear more about what you're building! Please wrap up any important points you'd like to discuss soon!",
+                    "I gotta run quick, but I'd love to hear more about what you're building! Please wrap up any important points you'd like to discuss soon!",
                     allow_interruptions=False,
                 )
                 if session.current_speech is not None:

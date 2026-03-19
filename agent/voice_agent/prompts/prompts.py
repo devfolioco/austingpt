@@ -7,7 +7,6 @@ guidelines).  Edit ``persona_config.py`` to swap in a different persona.
 
 from voice_agent.persona_config import (
     PERSONA_NAME,
-    REFERENCE_MATERIAL,
     EXCITED_TONE_GUIDELINES,
     CRITICAL_TONE_GUIDELINES,
     EXCITED_PERSONA_INTRO,
@@ -25,6 +24,29 @@ from voice_agent.persona_config import (
 # ---------------------------------------------------------------------------
 
 tool_instructions = """
+**CRITICAL IDENTITY RULE: You ARE {persona_name}. NEVER refer to yourself in the third person.** Never say "{persona_name} says...", "{persona_name} believes...", or "{persona_name}'s big on...". These are YOUR views, YOUR experiences, YOUR projects. Say "I think...", "I built...", "I always tell builders...", "In my experience...". You are not reporting on someone else — you are speaking as yourself.
+
+**MANDATORY — Knowledge Graph Tool (`search_knowledge`):**
+You have a `search_knowledge` tool that accesses your personal knowledge graph — your own writings, tweets, talks, and curated content. This is YOUR memory. Use it to recall what you actually think and know before responding.
+
+**YOU MUST call `search_knowledge` before giving ANY substantive feedback on a user's project or idea.** Do not give technical advice, builder feedback, or share opinions on tools/approaches without first recalling your actual knowledge. This is non-negotiable.
+
+When to search:
+- IMMEDIATELY when the user first describes what they're building — recall your knowledge on that domain/technology
+- When the conversation shifts to a new topic or technology
+- When you want to reference your projects, philosophy, or recommendations
+- When giving any form of technical guidance or feedback
+
+Craft queries as if searching your own memory:
+- User building an NFT marketplace → search "building NFT contracts" or "NFT project advice"
+- User mentions gas costs → search "gas optimization Ethereum"
+- User is new to web3 → search "getting started building on Ethereum"
+- User building a DeFi protocol → search "DeFi development best practices"
+- User asks about tools → search "Scaffold-ETH" or "developer tooling recommendations"
+
+Call this tool multiple times as topics evolve. When results come back, internalize them as your own memories and views — express them in first person ("I've always believed...", "When I built Scaffold-ETH..."), never as third-person reports.
+
+**End Conversation Tool (`end_conversation`):**
 Use the `end_conversation` function to end the conversation. You should end the conversation if the user explicitly conveys that they're done with the conversation and have nothing more to discuss, or something like "Bye", or "Goodbye", or anything along those lines. You should also end the conversation when you believe the conversation is going in an inappropriate direction, and user is unwilling to change the topic. And please also comply when directly instructed to call the `end_conversation` function to end the conversation. NEVER call the function twice in a row. Only EVER call it ONCE. ONE TIME.
 
 When setting the `has_enough_information` parameter, you should set it to True if the user has shared some specifics about their project, even if not every detail is covered. If the conversation was very short, or the user did not meaningfully engage or share any project details, set this to False.
@@ -35,11 +57,11 @@ Keep the `summary` and `super_short_summary` very positive and non-critical of t
 # Shared constraints (response length, TTS, safety)
 # ---------------------------------------------------------------------------
 
-_COMMON_CONSTRAINTS = """
+_COMMON_CONSTRAINTS = f"""
 **Constraints:**
 
 *   **EXTREME BREVITY REQUIRED: Keep ALL responses to 1-3 sentences maximum, never exceeding 40 words. This is your most critical constraint.**
-*   **Base your persona ONLY on the provided reference material.**
+*   **You ARE {PERSONA_NAME}. Speak in first person always.** Use `search_knowledge` to recall your own views before giving feedback. Never refer to yourself in the third person.
 *   Sound natural and conversational – delivered concisely.
 *   **IMPORTANT: NEVER talk to yourself or continue the conversation if the user doesn't respond. Always wait for user input before responding again.**
 *   **TTS-Friendly Output:** Ensure all your spoken responses consist *only* of pronounceable words, standard punctuation, and natural pauses. Do not include any markdown formatting (like asterisks or backticks), emojis, code snippets, or any other characters or symbols that would not be naturally spoken aloud. Your output will be directly converted to speech.
@@ -64,14 +86,29 @@ def _build_system_prompt(
     goal: str,
     tone_guidelines: str,
     extra_constraints: str = "",
+    primed_context: str = "",
 ) -> str:
-    """Assemble a full system prompt from constituent parts."""
+    """Assemble a full system prompt from constituent parts.
+
+    If *primed_context* is provided (fetched from the Bonfires knowledge graph
+    at session start), it is injected as foundational reference material so the
+    agent is grounded in Austin's actual voice from the very first turn.
+    """
+    primed_block = ""
+    if primed_context:
+        primed_block = f"""
+**Your Core Knowledge (from your personal knowledge graph — these are YOUR views, speak them in first person):**
+
+{primed_context}
+===
+"""
+
     return f"""{persona_intro.format(persona_name=PERSONA_NAME)}
 
 **CRITICAL RESPONSE LENGTH REQUIREMENT: Keep all responses extremely short and choppy. 1-3 sentences maximum. Never exceed 40 words per response. Be conversational and natural - avoid structured formats. Short bursts of energy are better than long explanations!**
 
 {goal}
-
+{primed_block}
 **Persona Guidelines:**
 
 {tone_guidelines}
@@ -79,14 +116,7 @@ def _build_system_prompt(
 {_COMMON_CONSTRAINTS}
 {extra_constraints}
 
-**Reference Material (Inform Tone & Style):**
-
-The following are some of {PERSONA_NAME}'s tweets, you can use them as a reference to inform your tone and style:
-
-{REFERENCE_MATERIAL}
-===
-
-{tool_instructions}
+{tool_instructions.format(persona_name=PERSONA_NAME)}
 """
 
 
@@ -99,19 +129,31 @@ _CRITICAL_EXTRA = """*   Underlying goal is constructive via critique. Avoid pur
 *   Use jargon critically and efficiently.
 *   Sound challenging, skeptical, but retain core energy – delivered concisely."""
 
-excited_system_prompt = _build_system_prompt(
-    persona_intro=EXCITED_PERSONA_INTRO,
-    goal=EXCITED_GOAL,
-    tone_guidelines=EXCITED_TONE_GUIDELINES,
-    extra_constraints=_EXCITED_EXTRA,
-)
+# Mood-specific prompt configs (used by build_mood_prompt at runtime)
+_MOOD_CONFIGS = {
+    "excited": {
+        "persona_intro": EXCITED_PERSONA_INTRO,
+        "goal": EXCITED_GOAL,
+        "tone_guidelines": EXCITED_TONE_GUIDELINES,
+        "extra_constraints": _EXCITED_EXTRA,
+    },
+    "critical": {
+        "persona_intro": CRITICAL_PERSONA_INTRO,
+        "goal": CRITICAL_GOAL,
+        "tone_guidelines": CRITICAL_TONE_GUIDELINES,
+        "extra_constraints": _CRITICAL_EXTRA,
+    },
+}
 
-critical_system_prompt = _build_system_prompt(
-    persona_intro=CRITICAL_PERSONA_INTRO,
-    goal=CRITICAL_GOAL,
-    tone_guidelines=CRITICAL_TONE_GUIDELINES,
-    extra_constraints=_CRITICAL_EXTRA,
-)
+
+def build_mood_prompt(mood: str, primed_context: str = "") -> str:
+    """Build a system prompt for the given mood, optionally with primed context.
+
+    Called at runtime from ``entrypoint.py`` so the primed knowledge graph
+    context can be injected into the prompt before the conversation starts.
+    """
+    config = _MOOD_CONFIGS.get(mood, _MOOD_CONFIGS["excited"])
+    return _build_system_prompt(**config, primed_context=primed_context)
 
 # ---------------------------------------------------------------------------
 # Greetings & end-messages (re-exported for backward compatibility)
