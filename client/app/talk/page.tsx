@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@/components/Button';
+import { PaymentGate } from '@/components/PaymentGate';
 import { PrefetchPersonaFrameAssets } from '@/components/PersonaFrame';
 import { personaConfig } from '@/config/persona.config';
 import LoadingPage from '@/components/LoadingPage';
@@ -16,8 +17,11 @@ import clsx from 'clsx';
 import { Room, RoomEvent } from 'livekit-client';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
-import { Suspense, useEffect, useRef, useState } from 'react';
+import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import type { ConnectionDetails } from '../api/connection-details/route';
+
+// When true, the payment gate is required before voice access
+const PAYMENT_GATE_ENABLED = process.env.NEXT_PUBLIC_DELVE_API_URL ? true : false;
 
 const parseMoodQueryParam = (query: string | string[] | null): AgentMoodI | null => {
   if (typeof query === 'string') {
@@ -41,7 +45,7 @@ const projectIdeas = [
 const testData = {
   oneLiner: projectIdeas[2],
   summary: `
-In a world drowning in lengthy emails, MailSprint revolutionizes the way you consume information. This Chrome extension streamlines communication by extracting the essence of any open email and delivering it in a concise easy-to-read summary. 
+In a world drowning in lengthy emails, MailSprint revolutionizes the way you consume information. This Chrome extension streamlines communication by extracting the essence of any open email and delivering it in a concise easy-to-read summary.
 Save time, stay focused, and conquer your inbox with MailSprint.
     `,
 };
@@ -63,6 +67,10 @@ const TalkComponent = () => {
   const [connecting, setConnecting] = useState(TEST ? true : false);
   const [connected, setConnected] = useState(TEST ? true : false);
   const isInitialRender = useRef(TEST ? true : false);
+
+  // Payment gate state
+  const [sessionToken, setSessionToken] = useState<string | null>(null);
+  const [paymentComplete, setPaymentComplete] = useState(!PAYMENT_GATE_ENABLED);
 
   const [isSummaryReceived, setIsSummaryReceived] = useState(TEST ? true : false);
 
@@ -93,7 +101,12 @@ const TalkComponent = () => {
     }
   };
 
-  async function connect() {
+  const handleSessionReady = useCallback((token: string) => {
+    setSessionToken(token);
+    setPaymentComplete(true);
+  }, []);
+
+  async function connect(token?: string | null) {
     try {
       setConnecting(true);
       requestMicrophonePermission();
@@ -102,7 +115,19 @@ const TalkComponent = () => {
         process.env.NEXT_PUBLIC_CONN_DETAILS_ENDPOINT ?? '/api/connection-details',
         window.location.origin
       );
-      const response = await fetch(`${url.toString()}?mood=${mood}`);
+
+      // Build query params
+      const params = new URLSearchParams();
+      if (mood) params.set('mood', mood);
+      if (token) params.set('session_token', token);
+
+      const response = await fetch(`${url.toString()}?${params.toString()}`);
+
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({ error: response.statusText }));
+        throw new Error(body.detail || body.error || `Connection failed (${response.status})`);
+      }
+
       const connectionDetailsData: ConnectionDetails = await response.json();
 
       if (connectionDetailsData.roomName) {
@@ -232,18 +257,19 @@ const TalkComponent = () => {
     }
   }, [mood, router]);
 
-  // Connect to LiveKit when mood is selected
+  // Connect to LiveKit when mood is selected AND payment is complete
   useEffect(() => {
     if (!mood) return;
+    if (!paymentComplete) return;
     if (isInitialRender.current) return;
 
-    connect();
+    connect(sessionToken);
     isInitialRender.current = true;
     console.log('connecting to room...');
     return () => {
       console.log('clean up ran');
     };
-  }, [room, mood]);
+  }, [room, mood, paymentComplete]);
 
   useEffect(() => {
     room.on(RoomEvent.MediaDevicesError, onDeviceFailure);
@@ -264,6 +290,11 @@ const TalkComponent = () => {
   // Persona selection UI
   if (!mood) {
     return <></>;
+  }
+
+  // Payment gate — show before voice session
+  if (!paymentComplete && PAYMENT_GATE_ENABLED) {
+    return <PaymentGate mood={mood} onSessionReady={handleSessionReady} />;
   }
 
   // Show loading state while connecting

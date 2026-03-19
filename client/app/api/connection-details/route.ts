@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { jwtVerify } from 'jose';
 import { AccessToken, AccessTokenOptions, VideoGrant } from 'livekit-server-sdk';
 import { NextResponse } from 'next/server';
 
@@ -6,6 +7,18 @@ import { NextResponse } from 'next/server';
 const API_KEY = process.env.LIVEKIT_API_KEY;
 const API_SECRET = process.env.LIVEKIT_API_SECRET;
 const LIVEKIT_URL = process.env.LIVEKIT_URL;
+
+// Voice session JWT gate — if set, requires a valid session token from Delve
+const VOICE_SESSION_JWT_SECRET = process.env.VOICE_SESSION_JWT_SECRET;
+
+// Single-use JTI enforcement: consumed tokens cannot be replayed
+const consumedJtis = new Set<string>();
+
+// Periodically clear consumed JTIs to prevent unbounded memory growth
+const JTI_CLEANUP_INTERVAL_MS = 15 * 60 * 1000; // 15 minutes
+setInterval(() => {
+  consumedJtis.clear();
+}, JTI_CLEANUP_INTERVAL_MS);
 
 // don't cache the results
 export const revalidate = 0;
@@ -20,6 +33,52 @@ export type ConnectionDetails = {
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
+
+    // --- x402 Session Gate ---
+    if (VOICE_SESSION_JWT_SECRET) {
+      const sessionToken =
+        searchParams.get('session_token') ||
+        request.headers.get('authorization')?.replace('Bearer ', '');
+
+      if (!sessionToken) {
+        return NextResponse.json(
+          { error: 'Payment required', detail: 'A valid session_token is required to access this voice agent.' },
+          { status: 402 }
+        );
+      }
+
+      try {
+        const secret = new TextEncoder().encode(VOICE_SESSION_JWT_SECRET);
+        const { payload } = await jwtVerify(sessionToken, secret, { algorithms: ['HS256'] });
+
+        if (payload.session_type !== 'voice') {
+          return NextResponse.json({ error: 'Invalid token', detail: 'Token is not a voice session token.' }, { status: 401 });
+        }
+
+        const jti = payload.jti;
+        if (!jti) {
+          return NextResponse.json({ error: 'Invalid token', detail: 'Token missing jti claim.' }, { status: 401 });
+        }
+
+        if (consumedJtis.has(jti)) {
+          return NextResponse.json(
+            { error: 'Token already used', detail: 'This session token has already been consumed.' },
+            { status: 409 }
+          );
+        }
+
+        // Mark as consumed (single-use)
+        consumedJtis.add(jti);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Token verification failed';
+        const isExpired = message.includes('exp');
+        return NextResponse.json(
+          { error: isExpired ? 'Token expired' : 'Invalid token', detail: message },
+          { status: 401 }
+        );
+      }
+    }
+    // --- End Gate ---
 
     const mood = searchParams.get('mood');
 
