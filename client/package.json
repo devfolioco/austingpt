@@ -24,6 +24,7 @@
     "canvas-confetti": "1.9.3",
     "clsx": "2.1.1",
     "framer-motion": "^11.18.0",
+    "jose": "^6.2.2",
     "kubo-rpc-client": "5.1.0",
     "livekit-client": "^2.8.0",
     "livekit-server-sdk": "^2.9.7",

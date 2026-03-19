@@ -47,6 +47,9 @@ importers:
       framer-motion:
         specifier: ^11.18.0
         version: 11.18.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      jose:
+        specifier: ^6.2.2
+        version: 6.2.2
       kubo-rpc-client:
         specifier: 5.1.0
         version: 5.1.0(undici@7.8.0)
@@ -2009,6 +2012,9 @@ packages:
 
   jose@5.10.0:
     resolution: {integrity: sha512-s+3Al/p9g32Iq+oqXxkW//7jk2Vig6FF1CFqzVXoTUXt2qz89YWbL+OwS17NFYEvxC35n0FKeGO2LGYSxeM2Gg==}
+
+  jose@6.2.2:
+    resolution: {integrity: sha512-d7kPDd34KO/YnzaDOlikGpOurfF0ByC2sEV4cANCtdqLlTfBlw2p14O/5d/zv40gJPbIQxfES3nSx1/oYNyuZQ==}
 
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
@@ -6407,6 +6413,8 @@ snapshots:
   jiti@1.21.7: {}
 
   jose@5.10.0: {}
+
+  jose@6.2.2: {}
 
   js-tokens@4.0.0: {}
 

@@ -12,9 +12,11 @@ import { projectId, wagmiAdapter } from '../config/wagmi';
 // Set up queryClient
 const queryClient = new QueryClient();
 
-const mintingReady = isZoraMintingEnabled && !!projectId && !!wagmiAdapter;
+// Wallet is needed for Zora minting OR for x402 payment gate
+const isPaymentGateEnabled = !!process.env.NEXT_PUBLIC_DELVE_API_URL;
+const walletReady = (isZoraMintingEnabled || isPaymentGateEnabled) && !!projectId && !!wagmiAdapter;
 
-if (mintingReady) {
+if (walletReady) {
   const featuredWalletIds = [
     // coinbase
     'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa',
@@ -42,7 +44,7 @@ if (mintingReady) {
 }
 
 function AppKitContextProvider({ children, cookies }: { children: ReactNode; cookies: string | null }) {
-  if (!mintingReady) {
+  if (!walletReady) {
     return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
   }
 
