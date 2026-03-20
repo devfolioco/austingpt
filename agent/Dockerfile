@@ -32,7 +32,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 # Install shared libs required by some deps (e.g. regex, lxml, etc.) --------
 RUN apt-get update -qy && \
-  apt-get install -qyy --no-install-recommends libpcre3 libxml2 && \
+  apt-get install -qyy --no-install-recommends libpcre2-8-0 libxml2 libglib2.0-0 && \
   rm -rf /var/lib/apt/lists/*
 
 # Copy the prepared virtualenv from the build stage
