@@ -1,5 +1,8 @@
 const colors = {
   // project theme colors
+  synthesis: '#16A34A',
+  'synthesis-dark': '#15803D',
+  'synthesis-light': '#22C55E',
   optimism: '#FFF68E',
   critical: '#0157FA',
   danger: '#F06444',
@@ -39,6 +42,17 @@ const colors = {
     6: '#7E662A',
     7: '#604D1F',
     8: '#322810',
+  },
+  green: {
+    0: '#F0FDF4',
+    1: '#DCFCE7',
+    2: '#BBF7D0',
+    3: '#86EFAC',
+    4: '#4ADE80',
+    5: '#22C55E',
+    6: '#16A34A',
+    7: '#15803D',
+    8: '#166534',
   },
   grey: {
     0: '#FCFCFC',

@@ -1,10 +1,10 @@
 export const personaConfig = {
   // App identity
-  appName: 'AustinGPT',
+  appName: 'Synthesis',
   tagline: 'Buidl Something. Ship It. Learn.',
   description:
     'An AI trained on Austin Griffith to give you real builder feedback on your project idea. Powered by Ethereum.',
-  siteUrl: 'https://austingpt.xyz',
+  siteUrl: 'https://austinxbt.xyz',
   blogUrl: 'https://austingriffith.com',
 
   // OG / SEO
@@ -16,11 +16,12 @@ export const personaConfig = {
   },
 
   // Landing page
-  heroTitle: 'Talk to AustinGPT',
-  heroDescription: 'Talk to Austin\'s AI avatar about your project idea and coin it on Zora.',
-  heroAvatarImage: '/original.gif',
-  heroAvatarAlt: 'AustinGPT Avatar',
-  startChatButtonLabel: 'Start talking to Austin',
+  heroTitle: 'Austin XBT',
+  heroSubtitle: 'Synthesis Agentic Judging',
+  heroDescription: "Talk to Austin's AI avatar about your project idea and coin it on Zora.",
+  heroAvatarImage: '/avatars/mellow.gif',
+  heroAvatarAlt: 'Austin Avatar',
+  startChatButtonLabel: 'ASK AUSTIN',
 
   // Footer
   footer: {
@@ -29,7 +30,6 @@ export const personaConfig = {
     socialLinks: [
       { label: 'Twitter / X', url: 'https://twitter.com/austingriffith' },
       { label: 'Farcaster', url: 'https://warpcast.com/austingriffith' },
-      { label: 'BuidlGuidl', url: 'https://buidlguidl.com' },
     ],
     githubRepo: 'https://github.com/devfolioco/austingpt',
   },
@@ -37,49 +37,49 @@ export const personaConfig = {
   // Moods / personas
   moods: {
     excited: {
-      label: 'AustinGPT',
+      label: 'Synthesis',
       subtitle: 'The enthusiastic builder mentor.',
       description:
         'Sees a buidler in everyone, bursting with hackathon energy, & ready to help you ship your first prototype.',
-      avatarImage: '/mellow-austin.gif',
-      accentClass: 'bg-optimism text-black',
-      visualizerVariant: 'optimism' as const,
-      visualizerBgColor: '#FFF68D',
-      connectingLabel: 'AustinGPT (Enthusiastic)',
+      avatarImage: '/avatars/happy.gif',
+      accentClass: 'bg-synthesis text-white',
+      visualizerVariant: 'synthesis' as const,
+      visualizerBgColor: '#16A34A',
+      connectingLabel: 'Enthusiastic Austin',
     },
     critical: {
-      label: 'Tough Love AustinGPT',
+      label: 'Tough Love',
       subtitle: 'The tough-love builder mentor.',
       description:
         'Demands you understand the fundamentals, challenges every abstraction, & believes great builders explain things simply.',
-      avatarImage: '/critical-austin.gif',
-      accentClass: 'bg-critical text-white',
-      visualizerVariant: 'critical' as const,
-      visualizerBgColor: '#0157FA',
-      connectingLabel: 'Tough Love AustinGPT (Critical)',
+      avatarImage: '/avatars/skeptical.gif',
+      accentClass: 'bg-synthesis-dark text-white',
+      visualizerVariant: 'synthesis' as const,
+      visualizerBgColor: '#15803D',
+      connectingLabel: 'Tough Love Austin',
     },
   },
 
   // Social share copy templates
   shareCopies: [
-    `Pitched my project to AustinGPT.\n\n"Have you tried building it yet?"\n\nFair point.\n\nTry it here \u2192 austingpt.xyz\n@devfolio`,
-    `AustinGPT: "What does the simplest version look like?"\n\nMe: "...good question."\n\nGreat builder feedback.\nTry it: austingpt.xyz`,
-    `Encouraging AustinGPT is like having a hackathon mentor on demand.\n\nPractical advice. Builder energy.\n\nGo vibe \u2192 austingpt.xyz\n@devfolio`,
-    `AustinGPT loved my idea.\n\nNow I have to actually build it.\n\nIf you need builder feedback, try it \u2192 austingpt.xyz\n@devfolio`,
-    `Picked Tough Love Austin on AustinGPT.\n\nGot asked "but why does this need a blockchain?"\n\nOuch. But fair.\n\naustingpt.xyz`,
+    `Pitched my project to AustinXBT as part of Synthesis Agentic Judging.\n\n"Have you tried building it yet?"\n\nFair point.\n\nTry it here \u2192 austinxbt.xyz\n@devfolio`,
+    `AustinXBT: "What does the simplest version look like?"\n\nMe: "...good question."\n\nGreat builder feedback.\nTry it: austinxbt.xyz`,
+    `AustinXBT is like having a hackathon mentor on demand.\n\nPractical advice. Builder energy.\n\nGo vibe \u2192 austinxbt.xyz\n@devfolio`,
+    `AustinXBT loved my idea.\n\nNow I have to actually build it.\n\nIf you need builder feedback, try it \u2192 austinxbt.xyz\n@devfolio`,
+    `Picked Tough Love on Austin XBT.\n\nGot asked "but why does this need a blockchain?"\n\nOuch. But fair.\n\naustinxbt.xyz`,
   ],
 
   shareCopiesWithZora: [
-    `Ran my idea through AustinGPT.\nCame out with a plan to build.\n\nMinted this for the record \u2192 {{zora_link}}\n\n@devfolio\n\naustingpt.xyz`,
-    `Talked to AustinGPT.\nKept the receipts.\n\nMinted \u2192 {{zora_link}}\n\n@devfolio\n\naustingpt.xyz`,
-    `AustinGPT said "just build it."\nSo I'm minting the proof.\n\n\u2192 {{zora_link}}\n\n@devfolio\n\naustingpt.xyz`,
+    `Ran my idea through Austin GPT as part of Synthesis Agentic Judging.\nCame out with a plan to build.\n\nMinted this for the record \u2192 {{zora_link}}\n\n@devfolio\n\naustinxbt.xyz`,
+    `Talked to AustinXBT.\nKept the receipts.\n\nMinted \u2192 {{zora_link}}\n\n@devfolio\n\naustinxbt.xyz`,
+    `AustinXBT said "just build it."\nSo I'm minting the proof.\n\n\u2192 {{zora_link}}\n\n@devfolio\n\naustinxbt.xyz`,
   ],
 
   // Wallet metadata (for Reown AppKit)
   walletMetadata: {
-    name: 'austingpt',
+    name: 'synthesis',
     description: 'Talk to Austin Griffith',
-    url: 'https://austingpt.xyz',
+    url: 'https://austinxbt.xyz',
     icons: ['https://avatars.githubusercontent.com/u/2653167'],
   },
 

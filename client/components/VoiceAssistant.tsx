@@ -32,9 +32,13 @@ export function VoiceAssistant({ mood, hideControls }: { mood: AgentMoodI; hideC
   const moodConfig = personaConfig.moods[moodKey];
 
   return (
-    <div className="fixed inset-0 flex flex-col items-center bg-[#638596] pt-8">
+    <div className="fixed inset-0 flex flex-col items-center bg-[#F5F5F5] pt-8">
       <div
-        className="absolute inset-0 pointer-events-none -z-10 h-full w-full bg-[radial-gradient(rgba(229,231,235,0.3)_1px,transparent_2px)] [background-size:36px_36px]"
+        className="absolute inset-0 pointer-events-none -z-10 h-full w-full"
+        style={{
+          backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.12) 1px, transparent 1px)',
+          backgroundSize: '18px 18px',
+        }}
         aria-hidden="true"
       ></div>
 
@@ -92,7 +96,7 @@ export function VoiceAssistant({ mood, hideControls }: { mood: AgentMoodI; hideC
             </div>
           </div>
 
-          <div className="text-sm md:text-base text-white font-inter text-center">
+          <div className="text-sm md:text-base text-grey-7 font-inter text-center">
             You can say 'Bye' or press the 'End' button to finish this conversation
           </div>
         </div>

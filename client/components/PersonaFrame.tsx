@@ -1,6 +1,6 @@
 import { nyghtMedium } from '@/app/fonts/fonts';
 import { personaConfig } from '@/config/persona.config';
-import { AgentMoodEnum, AgentMoodI } from '@/types/agent';
+import { AgentMoodI } from '@/types/agent';
 import { useEffect, useRef } from 'react';
 import rough from 'roughjs';
 
@@ -15,7 +15,7 @@ interface PersonaFrameProps {
 const frameWidth = 650;
 const frameHeight = 340;
 
-const MAX_IDEA_WIDTH = 350;
+const MAX_IDEA_WIDTH = 380;
 
 function resizeCanvas(canvas: HTMLCanvasElement) {
   const { devicePixelRatio: ratio = 1 } = window;
@@ -28,75 +28,54 @@ function resizeCanvas(canvas: HTMLCanvasElement) {
   context.scale(ratio, ratio);
 }
 
+const drawDotPattern = (ctx: CanvasRenderingContext2D, width: number, height: number) => {
+  const spacing = 18;
+  const radius = 1;
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.10)';
+
+  for (let x = spacing / 2; x < width; x += spacing) {
+    for (let y = spacing / 2; y < height; y += spacing) {
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+};
+
 const drawRoughEllipse = (
   canvasElement: HTMLCanvasElement,
   width: number,
   height: number,
   {
     ideaTextWidth,
+    ideaCenterY,
   }: {
     ideaTextWidth: number;
+    ideaCenterY: number;
   }
 ) => {
-  // Draw the concentric ellipses
-
   const rc = rough.canvas(canvasElement);
   const centerX = width / 2;
-  const centerY = height / 3 + 105; // Adjust to center around "MailSprint"
-  const ellipseWidth = ideaTextWidth + 60;
-  const ellipseHeight = 100;
+  const ellipseWidth = ideaTextWidth + 70;
+  const ellipseHeight = 90;
 
-  const jitter = 10;
+  const jitter = 8;
   const roughness = 1;
 
-  rc.ellipse(centerX, centerY, ellipseWidth, ellipseHeight - 20, {
-    stroke: '#0061F2',
-    strokeWidth: 4,
-    roughness,
-    // bowing: 100,
-  });
-  rc.ellipse(centerX + jitter, centerY, ellipseWidth, ellipseHeight - 20, {
-    stroke: '#0061F2',
-    strokeWidth: 2,
+  rc.ellipse(centerX, ideaCenterY, ellipseWidth, ellipseHeight, {
+    stroke: '#16A34A',
+    strokeWidth: 3,
     roughness,
   });
-  rc.ellipse(centerX - jitter, centerY + 4, ellipseWidth, ellipseHeight - 20, {
-    stroke: '#0061F2',
-    strokeWidth: 2,
+  rc.ellipse(centerX + jitter, ideaCenterY - 2, ellipseWidth, ellipseHeight, {
+    stroke: '#16A34A',
+    strokeWidth: 1.5,
     roughness,
   });
-};
-
-const loadPersonaAsset = async (mood: AgentMoodI): Promise<HTMLImageElement> => {
-  return new Promise((resolve, reject) => {
-    const personaImage = new Image();
-
-    personaImage.onload = () => {
-      resolve(personaImage);
-    };
-
-    personaImage.onerror = () => {
-      reject(new Error('Failed to load persona image'));
-    };
-
-    if (mood === AgentMoodEnum.EXCITED) {
-      personaImage.src = personaConfig.shareFrame.excitedAvatarImage;
-    } else {
-      personaImage.src = personaConfig.shareFrame.criticalAvatarImage;
-    }
-  });
-};
-
-const loadBackgroundAsset = async (): Promise<HTMLImageElement> => {
-  return new Promise((resolve, reject) => {
-    const backgroundImage = new Image();
-    backgroundImage.onload = () => {
-      resolve(backgroundImage);
-    };
-    backgroundImage.onerror = () => {
-      reject(new Error('Failed to load background image'));
-    };
-    backgroundImage.src = '/frame/dot-grid.svg';
+  rc.ellipse(centerX - jitter, ideaCenterY + 3, ellipseWidth, ellipseHeight, {
+    stroke: '#16A34A',
+    strokeWidth: 1.5,
+    roughness,
   });
 };
 
@@ -107,58 +86,63 @@ const drawFrame = async (
   idea: string,
   mood: AgentMoodI
 ) => {
-  // Resize the canvas for the display resolution
   resizeCanvas(canvasElement);
 
   const ctx = canvasElement.getContext('2d');
 
   if (!ctx) return;
 
-  // Set background color
-  ctx.fillStyle = '#638596';
+  // Background
+  ctx.fillStyle = '#F5F5F5';
   ctx.fillRect(0, 0, width, height);
 
-  // Draw background image
-  const backgroundImage = await loadBackgroundAsset();
-  ctx.drawImage(backgroundImage, 6, 4);
+  // Halftone dot pattern
+  drawDotPattern(ctx, width, height);
 
-  // Set up text styling
+  // Decorative top accent line
+  ctx.fillStyle = '#16A34A';
+  ctx.fillRect(width / 2 - 30, 28, 60, 2);
+
+  // Title: "Ethereum"
   ctx.textAlign = 'center';
-  ctx.fillStyle = '#FFFFFF'; // Set text color to white
+  ctx.fillStyle = '#171D21';
+  ctx.font = `bold 52px ${nyghtMedium.style.fontFamily}`;
+  ctx.fillText(personaConfig.shareFrame.title, width / 2, height / 3 - 10);
 
-  // Draw frame title
-  ctx.font = `bold 50px ${nyghtMedium.style.fontFamily}`;
-  ctx.fillText(personaConfig.shareFrame.title, width / 2, height / 3 - 20);
+  // Subtitle: "is for"
+  ctx.font = `normal 36px ${nyghtMedium.style.fontFamily}`;
+  ctx.fillStyle = '#5C686D';
+  ctx.fillText(personaConfig.shareFrame.subtitle, width / 2, height / 3 + 35);
 
-  // Draw frame subtitle
-  // Font is inherited from previous fillText, no need to reset unless different
-  ctx.fillText(personaConfig.shareFrame.subtitle, width / 2, height / 3 + 40);
-
-  //   default font size
+  // Idea text — measure and scale
   ctx.font = `bold 50px ${nyghtMedium.style.fontFamily}`;
   const expectedIdeaTextWidth = ctx.measureText(idea).width;
-
   const scaleDownRatio = expectedIdeaTextWidth > MAX_IDEA_WIDTH ? MAX_IDEA_WIDTH / expectedIdeaTextWidth : 1;
-
   const ideaFontSize = 50 * scaleDownRatio;
-  // todo: add logic to break line, first instead of scaling down
 
   ctx.font = `bold ${ideaFontSize}px ${nyghtMedium.style.fontFamily}`;
-
   const ideaTextWidth = ctx.measureText(idea).width;
 
-  // Draw idea name
-  ctx.font = `bold ${ideaFontSize}px ${nyghtMedium.style.fontFamily}`;
+  const ideaY = height / 3 + (110 - (1 - scaleDownRatio) * 14);
+  ctx.fillStyle = '#171D21';
+  ctx.fillText(idea, width / 2, ideaY);
 
-  ctx.fillText(idea, width / 2, height / 3 + (120 - (1 - scaleDownRatio) * 14));
+  // Draw rough ellipses around the idea
+  drawRoughEllipse(canvasElement, frameWidth, frameHeight, {
+    ideaTextWidth,
+    ideaCenterY: ideaY - ideaFontSize * 0.25,
+  });
 
-  // Load and draw the persona image in the bottom left corner
-  const personaImage = await loadPersonaAsset(mood);
-  const imageSize = 114;
-  ctx.drawImage(personaImage, 32, frameHeight - imageSize, imageSize, imageSize);
+  // Bottom branding: "SYNTHESIS" in small caps
+  ctx.font = '500 10px Inter, system-ui, sans-serif';
+  ctx.fillStyle = '#B4BEC0';
+  ctx.textAlign = 'right';
+  ctx.letterSpacing = '3px';
+  ctx.fillText('S Y N T H E S I S', width - 24, height - 18);
 
-  // Draw the rough ellipse
-  drawRoughEllipse(canvasElement, frameWidth, frameHeight, { ideaTextWidth });
+  // Bottom-left accent mark
+  ctx.fillStyle = '#16A34A';
+  ctx.fillRect(24, height - 24, 20, 2);
 };
 
 const PersonaFrame = ({ idea, onImageReady, onError, mood, className }: PersonaFrameProps) => {
@@ -166,34 +150,25 @@ const PersonaFrame = ({ idea, onImageReady, onError, mood, className }: PersonaF
 
   const handleDownload = () => {
     if (canvasRef.current) {
-      // Create a temporary link element
       const link = document.createElement('a');
-      // Set the download name
       link.download = `ethereum-is-for-${idea.toLowerCase().replace(' ', '-')}.png`;
-      // Convert canvas to data URL
       link.href = canvasRef.current.toDataURL('image/png');
-      // Append to document (required for Firefox)
       document.body.appendChild(link);
-      // Trigger the download
       link.click();
-      // Clean up
       document.body.removeChild(link);
     }
   };
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Check for CMD+. (Mac) or CTRL+. (Windows)
       if ((e.metaKey || e.ctrlKey) && e.key === '.') {
         e.preventDefault();
         handleDownload();
       }
     };
 
-    // Add event listener
     window.addEventListener('keydown', handleKeyDown);
 
-    // Clean up
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
@@ -218,7 +193,6 @@ const PersonaFrame = ({ idea, onImageReady, onError, mood, className }: PersonaF
 
     return () => {
       if (canvasRef.current) {
-        // Clear the canvas when component unmounts
         const ctx = canvasRef.current.getContext('2d');
         if (ctx) {
           ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
@@ -232,19 +206,13 @@ const PersonaFrame = ({ idea, onImageReady, onError, mood, className }: PersonaF
       ref={canvasRef}
       width={frameWidth}
       height={frameHeight}
-      // this is important to load the font family, before canvas is drawn
       className={`w-full h-full ${nyghtMedium.className} ${className}`}
     ></canvas>
   );
 };
 
 export const PrefetchPersonaFrameAssets = () => {
-  return (
-    <>
-      <link rel="prefetch" href="/frame/dot-grid.svg" as="image" type="image/svg+xml" />
-      <link rel="prefetch" href={personaConfig.shareFrame.excitedAvatarImage} as="image" type="image/png" />
-    </>
-  );
+  return null;
 };
 
 export default PersonaFrame;

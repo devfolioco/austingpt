@@ -300,12 +300,19 @@ const TalkComponent = () => {
   // Show loading state while connecting
   if (connecting && !connected) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-[#0C1110]">
-        <div className="flex flex-col items-center justify-center gap-4">
-          <div className="text-white text-lg md:text-2xl font-bold mb-4 px-8 md:px-0 text-center">
+      <main className="min-h-screen flex items-center justify-center bg-[#F5F5F5] relative">
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.12) 1px, transparent 1px)',
+            backgroundSize: '18px 18px',
+          }}
+        />
+        <div className="relative z-10 flex flex-col items-center justify-center gap-4">
+          <div className="text-[#171D21] text-lg md:text-2xl font-bold mb-4 px-8 md:px-0 text-center font-inter tracking-[0.05em]">
             Connecting to {personaConfig.moods[mood === AgentMoodEnum.EXCITED ? 'excited' : 'critical'].connectingLabel}...
           </div>
-          <div className="w-12 h-12 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-10 h-10 border-3 border-[#16A34A]/40 border-t-[#16A34A] rounded-full animate-spin"></div>
         </div>
       </main>
     );
@@ -313,7 +320,7 @@ const TalkComponent = () => {
 
   // Voice assistant UI
   return (
-    <main data-lk-theme="default" className="h-full grid content-center bg-[var(--lk-bg)]">
+    <main data-lk-theme="default" className="h-full grid content-center bg-[#F5F5F5]">
       {/* Prefetch assets for the PersonaFrame */}
       <PrefetchPersonaFrameAssets />
 
@@ -329,11 +336,11 @@ const TalkComponent = () => {
             appearance="colored"
             stretch={isPhone}
             className={clsx(
-              mood === AgentMoodEnum.EXCITED ? 'text-black bg-optimism' : 'text-white bg-critical shadow-lg'
+              mood === AgentMoodEnum.EXCITED ? 'text-white bg-synthesis' : 'text-white bg-synthesis-dark shadow-lg'
             )}
             onClick={handleRetry}
           >
-            <MicIcon color={mood === AgentMoodEnum.EXCITED ? 'black' : 'white'} />
+            <MicIcon color="white" />
             Chat again
           </Button>
 

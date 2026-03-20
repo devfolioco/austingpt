@@ -6,10 +6,10 @@ import React from 'react';
 
 interface AudioVisualizerProps {
   state: 'speaking' | 'idle';
-  variant?: 'critical' | 'optimism';
+  variant?: 'critical' | 'optimism' | 'synthesis';
 }
 
-const AudioVisualizer: React.FC<AudioVisualizerProps> = ({ state: activeState = 'speaking', variant = 'critical' }) => {
+const AudioVisualizer: React.FC<AudioVisualizerProps> = ({ state: activeState = 'speaking', variant = 'synthesis' }) => {
   const getVariant = (duration: number) => {
     const delay = undefined;
 
@@ -34,7 +34,7 @@ const AudioVisualizer: React.FC<AudioVisualizerProps> = ({ state: activeState = 
     };
   };
 
-  const barClasses = clsx('w-1 rounded-sm', variant === 'critical' ? 'bg-white' : 'bg-black');
+  const barClasses = clsx('w-1 rounded-sm', 'bg-white');
 
   return (
     <div className="flex items-center justify-center md:w-16 md:h-16 w-10 h-10">
@@ -43,7 +43,7 @@ const AudioVisualizer: React.FC<AudioVisualizerProps> = ({ state: activeState = 
         id={activeState === 'speaking' ? 'state1' : 'state2'}
         className={clsx(
           `relative flex items-center justify-center gap-1 md:w-16 md:h-16 w-10 h-10 rounded-full ${activeState === 'speaking' ? 'speaking' : 'not-speaking'}`,
-          variant === 'critical' ? 'bg-critical' : 'bg-optimism'
+          'bg-synthesis'
         )}
       >
         <motion.div className={barClasses} animate={activeState} variants={getVariant(0.8)} />

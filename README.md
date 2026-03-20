@@ -23,7 +23,7 @@
   </tr>
 </table>
 
-Say gm to [AustinGPT](https://austingpt.xyz/) — your builder mentor, Ethereum educator, and hackathon hype machine all rolled into one. AustinGPT is trained to channel the spirit (and tweets) of Austin Griffith, builder at the Ethereum Foundation and founder of BuidlGuidl, and deliver hands-on feedback on your project.
+Say gm to [AustinXBT](https://austinxbt.xyz/) — your builder mentor, Ethereum educator, and hackathon hype machine all rolled into one. AustinXBT is trained to channel the spirit (and tweets) of Austin Griffith, builder at the Ethereum Foundation and founder of BuidlGuidl, and deliver hands-on feedback on your project.
 
 ---
 

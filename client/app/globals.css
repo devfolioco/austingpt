@@ -3,8 +3,9 @@
 @tailwind utilities;
 
 :root {
-  --primary: #638596;
-  --text-color: #fff;
+  --primary: #F5F5F5;
+  --text-color: #171D21;
+  --accent: #16A34A;
 }
 
 html {
@@ -27,6 +28,13 @@ body {
 :root {
   --lk-va-bar-width: 72px;
   --lk-control-bar-height: unset;
+  --lk-bg: #F5F5F5;
+  --lk-fg: #171D21;
+}
+
+[data-lk-theme="default"] {
+  --lk-bg: #F5F5F5;
+  --lk-fg: #171D21;
 }
 
 .agent-visualizer {
@@ -42,13 +50,13 @@ body {
   width: 6%;
   max-width: 4px;
   min-width: 2px;
-  background-color: #20282c;
+  background-color: #16A34A;
   margin: 2px;
   max-height: 60%;
 }
 
 .agent-visualizer > .lk-audio-bar.lk-highlighted {
-  background-color: #3b4144;
+  background-color: #22C55E;
 }
 
 .lk-agent-control-bar {
@@ -56,5 +64,21 @@ body {
 }
 
 .lk-disconnect-button {
-  @apply h-[36px] hover:bg-[#6b221a] hover:text-[white] bg-[#31100c] border-[#6b221a];
+  @apply h-[36px] hover:bg-red-600 hover:text-white bg-red-700 border-red-600;
+}
+
+/* MediaDeviceMenu dropdown button - fix chevron visibility on light theme */
+.lk-button-group-menu > button {
+  background-color: #F5F5F5 !important;
+  border-color: #E4EAEB !important;
+  color: #5C686D !important;
+}
+
+.lk-button-group-menu > button:hover {
+  background-color: #E4EAEB !important;
+}
+
+.lk-button-group-menu > button svg {
+  color: #5C686D !important;
+  fill: #5C686D !important;
 }

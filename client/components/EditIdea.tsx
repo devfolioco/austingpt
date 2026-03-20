@@ -1,5 +1,4 @@
-import { nyghtMedium } from '@/app/fonts/fonts';
-import clsx from 'clsx';
+import { personaConfig } from '@/config/persona.config';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
@@ -41,21 +40,22 @@ const EditIdea = ({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className={clsx(
-          'absolute top-0 left-0 w-full h-full bg-black text-white flex flex-col items-center justify-center gap-2 md:gap-4',
-          nyghtMedium.className
-        )}
+        className="absolute top-0 left-0 w-full h-full bg-[#171D21] text-white flex flex-col items-center justify-center gap-2 md:gap-4 font-inter"
       >
         <h1 className="block md:hidden text-3xl md:text-5xl font-bold translate-y-[-9px] translate-x-[1px]">
-          Base is for
+          {personaConfig.shareFrame.title} {personaConfig.shareFrame.subtitle}
         </h1>
-        <h1 className="hidden md:block text-3xl md:text-5xl font-bold translate-y-[-9px] translate-x-[1px]">Base</h1>
-        <h1 className="hidden md:block text-3xl md:text-5xl font-bold translate-y-[-12px] translate-x-[1px]">is for</h1>
+        <h1 className="hidden md:block text-3xl md:text-5xl font-bold translate-y-[-9px] translate-x-[1px]">
+          {personaConfig.shareFrame.title}
+        </h1>
+        <h1 className="hidden md:block text-3xl md:text-5xl font-bold translate-y-[-12px] translate-x-[1px]">
+          {personaConfig.shareFrame.subtitle}
+        </h1>
 
         <div className="max-w-[80%] flex flex-col gap-2 -translate-x-[2px] relative">
           <input
             type="text"
-            className="w-full bg-transparent text-white !text-3xl md:!text-5xl border-b-2 border-white text-center focus:outline-none hover:outline-none -mt-1 mx-auto"
+            className="w-full bg-transparent text-white !text-3xl md:!text-5xl border-b-2 border-[#16A34A] text-center focus:outline-none hover:outline-none -mt-1 mx-auto font-inter"
             placeholder="Your Idea name"
             value={localValue}
             onChange={handleChange}
@@ -64,11 +64,17 @@ const EditIdea = ({
           />
         </div>
 
-        <div className="flex gap-2 font-inter mt-4">
-          <button className="bg-transparent text-white px-2 py-1 min-w-24 !font-medium" onClick={onClose}>
+        <div className="flex gap-3 font-inter mt-4">
+          <button
+            className="bg-transparent text-white/70 hover:text-white px-4 py-2 min-w-24 font-medium transition-colors"
+            onClick={onClose}
+          >
             Discard
           </button>
-          <button className="bg-white text-black px-2 py-1 rounded-lg min-w-24 !font-medium" onClick={save}>
+          <button
+            className="bg-[#16A34A] text-white px-4 py-2 min-w-24 font-medium hover:bg-[#15803D] transition-colors"
+            onClick={save}
+          >
             Save
           </button>
         </div>

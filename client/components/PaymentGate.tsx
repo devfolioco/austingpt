@@ -1,6 +1,5 @@
 'use client';
 
-import { nyghtMedium } from '@/app/fonts/fonts';
 import { personaConfig } from '@/config/persona.config';
 import { useVoiceSession, type VoiceSessionStep } from '@/hooks/useVoiceSession';
 import { useAppKitAccount } from '@reown/appkit/react';
@@ -34,20 +33,17 @@ const stepLabels: Record<VoiceSessionStep, string> = {
 export function PaymentGate({ mood, onSessionReady }: PaymentGateProps) {
   const moodKey = getMoodKey(mood);
   const moodConfig = personaConfig.moods[moodKey];
-  const isExcited = mood === AgentMoodEnum.EXCITED;
 
   const { step, error, sessionToken, connectWallet, startPayment, reset, isLoading } = useVoiceSession();
 
   const { isConnected } = useAppKitAccount();
 
-  // Auto-advance from DISCONNECTED when wallet connects
   useEffect(() => {
     if (isConnected && step === 'DISCONNECTED') {
       connectWallet();
     }
   }, [isConnected, step, connectWallet]);
 
-  // Fire callback when session is ready
   useEffect(() => {
     if (step === 'SESSION_READY' && sessionToken) {
       const timer = setTimeout(() => onSessionReady(sessionToken), 800);
@@ -55,28 +51,15 @@ export function PaymentGate({ mood, onSessionReady }: PaymentGateProps) {
     }
   }, [step, sessionToken, onSessionReady]);
 
-  const accentColor = isExcited ? '#FFF68D' : '#0157FA';
-  const accentText = isExcited ? 'text-black' : 'text-white';
-  const accentBg = isExcited ? 'bg-[#FFF68D]' : 'bg-[#0157FA]';
-
   return (
-    <main className="min-h-screen flex items-center justify-center bg-[#0C1110] relative overflow-hidden">
-      {/* Background grid pattern */}
+    <main className="min-h-screen flex items-center justify-center bg-[#F5F5F5] relative overflow-hidden">
+      {/* Dot pattern */}
       <div
-        className="absolute inset-0 opacity-[0.04]"
+        className="absolute inset-0 pointer-events-none"
         style={{
-          backgroundImage: `
-            linear-gradient(${accentColor}33 1px, transparent 1px),
-            linear-gradient(90deg, ${accentColor}33 1px, transparent 1px)
-          `,
-          backgroundSize: '48px 48px',
+          backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.12) 1px, transparent 1px)',
+          backgroundSize: '18px 18px',
         }}
-      />
-
-      {/* Radial glow behind card */}
-      <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-[120px] opacity-[0.07]"
-        style={{ background: accentColor }}
       />
 
       <motion.div
@@ -96,7 +79,7 @@ export function PaymentGate({ mood, onSessionReady }: PaymentGateProps) {
             alt={`${moodConfig.label} Avatar`}
             width={160}
             height={160}
-            className="rounded-none w-28 h-28 md:w-40 md:h-40"
+            className="w-28 h-28 md:w-40 md:h-40"
             priority
           />
         </motion.div>
@@ -106,7 +89,7 @@ export function PaymentGate({ mood, onSessionReady }: PaymentGateProps) {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.4 }}
-          className={clsx('text-3xl md:text-4xl text-white mt-6', nyghtMedium.className)}
+          className="text-3xl md:text-4xl text-[#171D21] mt-6 font-inter font-bold tracking-[0.15em] uppercase"
         >
           {moodConfig.label}
         </motion.h1>
@@ -116,16 +99,10 @@ export function PaymentGate({ mood, onSessionReady }: PaymentGateProps) {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.4 }}
-          className="mt-3 flex items-center gap-2"
+          className="mt-4 flex items-center gap-2"
         >
-          <span className="text-white/50 font-inter text-sm tracking-wide uppercase">Session</span>
-          <span
-            className={clsx(
-              'font-mono text-sm font-bold px-2.5 py-0.5 rounded-full',
-              accentBg,
-              accentText
-            )}
-          >
+          <span className="text-[#8E989C] font-inter text-sm tracking-wide uppercase">Session</span>
+          <span className="font-mono text-sm font-bold px-2.5 py-0.5 rounded-full bg-[#16A34A] text-white">
             ${PAYMENT_AMOUNT} USDC
           </span>
         </motion.div>
@@ -135,7 +112,7 @@ export function PaymentGate({ mood, onSessionReady }: PaymentGateProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4, duration: 0.3 }}
-          className="mt-6 text-white/60 font-inter text-sm h-5"
+          className="mt-6 text-[#5C686D] font-inter text-sm h-5"
         >
           <AnimatePresence mode="wait">
             <motion.span
@@ -173,7 +150,7 @@ export function PaymentGate({ mood, onSessionReady }: PaymentGateProps) {
                         : 'w-1.5 h-1.5'
                   )}
                   style={{
-                    backgroundColor: isActive ? accentColor : 'rgba(255,255,255,0.15)',
+                    backgroundColor: isActive ? '#16A34A' : 'rgba(0,0,0,0.12)',
                   }}
                   animate={
                     isCurrent && isLoading
@@ -207,11 +184,10 @@ export function PaymentGate({ mood, onSessionReady }: PaymentGateProps) {
                 exit={{ opacity: 0, scale: 0.95 }}
                 onClick={connectWallet}
                 className={clsx(
-                  'w-full py-4 rounded-lg text-lg font-semibold transition-all',
-                  'border-2 border-white/20 text-white bg-white/5',
-                  'hover:bg-white/10 hover:border-white/30',
-                  'active:scale-[0.98]',
-                  nyghtMedium.className
+                  'w-full py-4 text-lg font-semibold transition-all font-inter tracking-[0.08em] uppercase',
+                  'border-2 border-[#E4EAEB] text-[#171D21] bg-white',
+                  'hover:border-[#16A34A] hover:text-[#16A34A]',
+                  'active:scale-[0.98]'
                 )}
               >
                 Connect Wallet
@@ -226,12 +202,9 @@ export function PaymentGate({ mood, onSessionReady }: PaymentGateProps) {
                 exit={{ opacity: 0, scale: 0.95 }}
                 onClick={startPayment}
                 className={clsx(
-                  'w-full py-4 rounded-lg text-lg font-semibold transition-all',
+                  'w-full py-4 text-lg font-semibold transition-all font-inter tracking-[0.08em] uppercase',
                   'active:scale-[0.98]',
-                  accentBg,
-                  accentText,
-                  'hover:opacity-90',
-                  nyghtMedium.className
+                  'bg-[#16A34A] text-white hover:bg-[#15803D]'
                 )}
               >
                 Pay & Start Session
@@ -246,11 +219,8 @@ export function PaymentGate({ mood, onSessionReady }: PaymentGateProps) {
                 exit={{ opacity: 0 }}
                 className="flex flex-col items-center gap-3"
               >
-                <div
-                  className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin"
-                  style={{ borderColor: `${accentColor}60`, borderTopColor: 'transparent' }}
-                />
-                <span className="text-white/40 font-inter text-xs">
+                <div className="w-8 h-8 border-2 border-[#16A34A]/40 border-t-transparent rounded-full animate-spin" />
+                <span className="text-[#8E989C] font-inter text-xs">
                   {step === 'SIGNING' ? 'Waiting for wallet signature\u2026' : 'Processing payment\u2026'}
                 </span>
               </motion.div>
@@ -267,13 +237,13 @@ export function PaymentGate({ mood, onSessionReady }: PaymentGateProps) {
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                  className={clsx('w-12 h-12 rounded-full flex items-center justify-center', accentBg)}
+                  className="w-12 h-12 rounded-full flex items-center justify-center bg-[#16A34A]"
                 >
-                  <svg className={accentText} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                  <svg className="text-white" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                 </motion.div>
-                <span className="text-white/60 font-inter text-sm">Connecting to voice agent\u2026</span>
+                <span className="text-[#5C686D] font-inter text-sm">Connecting to voice agent\u2026</span>
               </motion.div>
             )}
 
@@ -285,12 +255,12 @@ export function PaymentGate({ mood, onSessionReady }: PaymentGateProps) {
                 exit={{ opacity: 0 }}
                 className="flex flex-col items-center gap-3"
               >
-                <p className="text-red-400/80 font-inter text-sm max-w-xs">{error}</p>
+                <p className="text-[#DC2626] font-inter text-sm max-w-xs">{error}</p>
                 <button
                   onClick={reset}
                   className={clsx(
-                    'px-6 py-2.5 rounded-lg text-sm font-medium',
-                    'border border-white/20 text-white/70 hover:text-white hover:border-white/30',
+                    'px-6 py-2.5 text-sm font-medium',
+                    'border-2 border-[#E4EAEB] text-[#5C686D] hover:text-[#171D21] hover:border-[#16A34A]',
                     'transition-all active:scale-[0.98]'
                   )}
                 >
@@ -306,7 +276,7 @@ export function PaymentGate({ mood, onSessionReady }: PaymentGateProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.7, duration: 0.4 }}
-          className="mt-10 text-white/25 font-inter text-[11px] leading-relaxed max-w-xs"
+          className="mt-10 text-[#B4BEC0] font-inter text-[11px] leading-relaxed max-w-xs"
         >
           Powered by x402 micropayments on Base.
           <br />

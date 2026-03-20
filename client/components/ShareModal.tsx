@@ -84,7 +84,6 @@ const ShareModal = ({ data: initialData, onClose, mood, isOpen, roomId }: ShareM
       setTimeout(() => {
         triggerConfetti();
         setZoraToastVisible(true);
-        // Send analytics event for successful Zora coin creation
         track('zora_coined', {
           title: data.oneLiner,
           roomId: roomId,
@@ -175,7 +174,6 @@ const ShareModal = ({ data: initialData, onClose, mood, isOpen, roomId }: ShareM
     setData({ ...data, oneLiner: value });
   };
 
-  // show "This is taking longer than expected" after 3 mins
   const [isCoiningDelayed, setIsCoiningDelayed] = useState(false);
 
   useEffect(() => {
@@ -186,7 +184,7 @@ const ShareModal = ({ data: initialData, onClose, mood, isOpen, roomId }: ShareM
           setIsCoiningDelayed(true);
         },
         1000 * 60 * 3
-      ); // show warning after 3 mins
+      );
     }
 
     return () => {
@@ -198,39 +196,48 @@ const ShareModal = ({ data: initialData, onClose, mood, isOpen, roomId }: ShareM
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="flex items-center justify-center absolute inset-0 bg-black bg-opacity-80 w-screen min-h-screen backdrop-blur-lg z-20"
+          className="fixed inset-0 z-20 bg-[#F5F5F5]/95 backdrop-blur-sm flex items-center justify-center"
           onClick={onClose}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0, transition: { duration: 0.1 } }}
           transition={{ duration: 0.2 }}
         >
+          {/* Dot pattern */}
           <div
-            className="flex flex-col items-center gap-4 md:max-w-[682px] md:bg-secondary rounded-2xl p-4 relative overflow-scroll h-full md:h-auto md:overflow-visible"
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.12) 1px, transparent 1px)',
+              backgroundSize: '18px 18px',
+            }}
+          />
+
+          <div
+            className="relative z-10 flex flex-col items-center gap-4 md:max-w-[682px] w-full bg-white border border-[#E4EAEB] md:rounded-lg p-4 md:p-6 overflow-auto h-full md:h-auto md:max-h-[90vh] md:overflow-visible shadow-lg"
             onClick={handleDefaultClick}
           >
             {!editMode && (
               <button
-                className="absolute top-8 right-8 md:top-10 md:right-10 hover:opacity-80 transition-opacity cursor-pointer z-10"
+                className="absolute top-4 right-4 md:top-6 md:right-6 w-8 h-8 flex items-center justify-center hover:opacity-60 transition-opacity cursor-pointer z-10"
                 onClick={onClose}
               >
-                <CloseIcon color="#2D2D2D" className="w-5 h-5 md:w-6 md:h-6" />
+                <CloseIcon color="#5C686D" className="w-5 h-5" />
               </button>
             )}
 
-            <div className="flex flex-col items-start md:rounded-xl md:overflow-hidden">
-              <div className="relative">
+            <div className="flex flex-col items-start md:rounded-lg md:overflow-hidden w-full">
+              <div className="relative w-full">
                 <PersonaFrame
                   idea={data.oneLiner}
                   mood={mood}
                   onImageReady={onImageReady}
                   onError={handleFrameError}
-                  className="rounded-xl md:rounded-none mb-4 md:mb-0"
+                  className="rounded-lg md:rounded-none mb-4 md:mb-0"
                 />
 
                 {!editMode && (
                   <button
-                    className="absolute right-5 bottom-4 px-4 py-1 rounded-full bg-secondary !font-inter text-white !font-medium"
+                    className="absolute right-4 bottom-4 px-4 py-1 rounded-full bg-[#171D21] font-inter text-white font-medium text-sm hover:bg-[#273339] transition-colors"
                     onClick={() => setEditMode(true)}
                   >
                     Edit
@@ -240,19 +247,19 @@ const ShareModal = ({ data: initialData, onClose, mood, isOpen, roomId }: ShareM
                   <EditIdea value={data.oneLiner} onChange={handleOneLinerChange} onClose={() => setEditMode(false)} />
                 )}
               </div>
-              <div className="flex justify-center items-center gap-2 py-3 px-2 md:px-4 md:bg-[#1D1D1D] text-white md:text-lg leading-[26px] md:leading-[28px] md:font-extralight font-inter">
+              <div className="flex justify-center items-center gap-2 py-3 px-2 md:px-4 bg-[#FAFAFA] border-t border-[#E4EAEB] text-[#5C686D] md:text-base text-sm leading-relaxed font-inter w-full">
                 {data.summary}
               </div>
             </div>
 
-            <div className="flex flex-col md:flex-row gap-4 items-center w-full mt-2">
+            <div className="flex flex-col md:flex-row gap-3 items-center w-full mt-2">
               <Button
                 appearance="colored"
-                className={clsx(mood === AgentMoodEnum.CRITICAL ? 'bg-critical text-white' : 'bg-optimism text-black')}
+                className="bg-[#16A34A] text-white hover:bg-[#15803D]"
                 onClick={handleChatAgain}
                 stretch
               >
-                <MicIcon color={mood === AgentMoodEnum.CRITICAL ? 'white' : 'black'} />
+                <MicIcon color="white" />
                 Chat again
               </Button>
 
@@ -260,7 +267,7 @@ const ShareModal = ({ data: initialData, onClose, mood, isOpen, roomId }: ShareM
                 (zoraResult ? (
                   <Button
                     appearance="colored"
-                    className="bg-white text-black"
+                    className="bg-[#171D21] text-white hover:bg-[#273339]"
                     href={zoraResult.zoraLink}
                     target="_blank"
                     stretch
@@ -271,7 +278,7 @@ const ShareModal = ({ data: initialData, onClose, mood, isOpen, roomId }: ShareM
                 ) : (
                   <Button
                     appearance="colored"
-                    className={clsx('bg-white ', isLoading ? 'text-grey-7' : 'text-black')}
+                    className={clsx('bg-[#171D21] hover:bg-[#273339]', isLoading ? 'text-[#8E989C]' : 'text-white')}
                     onClick={handleCoinOnZoraClick}
                     stretch
                     disabled={isLoading}
@@ -282,20 +289,30 @@ const ShareModal = ({ data: initialData, onClose, mood, isOpen, roomId }: ShareM
                 ))}
             </div>
 
-            <div className="flex flex-col md:flex-row gap-4 items-center w-full">
-              <Button appearance="colored" className="bg-farcaster  text-white" onClick={handleFarcaster} stretch>
+            <div className="flex flex-col md:flex-row gap-3 items-center w-full">
+              <Button
+                appearance="colored"
+                className="bg-farcaster text-white"
+                onClick={handleFarcaster}
+                stretch
+              >
                 <FarcasterIcon />
                 Cast
               </Button>
 
-              <Button appearance="colored" className="bg-x  text-white" onClick={handleTweet} stretch>
+              <Button
+                appearance="colored"
+                className="bg-[#171D21] text-white hover:bg-[#273339]"
+                onClick={handleTweet}
+                stretch
+              >
                 <XIcon />
                 Post
               </Button>
             </div>
 
             {isZoraMintingEnabled && (
-              <div className="flex justify-center text-sm md:text-base text-white/90 font-inter text-center">
+              <div className="flex justify-center text-xs md:text-sm text-[#8E989C] font-inter text-center">
                 Note: Coining on Zora requires a small amount of ETH for gas fees
               </div>
             )}
@@ -311,7 +328,7 @@ const ShareModal = ({ data: initialData, onClose, mood, isOpen, roomId }: ShareM
               {isZoraMintingEnabled && zoraSuccessToastVisible && (
                 <Snackbar appearance="success">
                   Your idea has been successfully coined on Zora.{' '}
-                  <a href={zoraResult?.zoraLink ?? ''} target="_blank" className="underline">
+                  <a href={zoraResult?.zoraLink ?? ''} target="_blank" className="underline text-[#16A34A]">
                     Check it out here.
                   </a>
                 </Snackbar>
@@ -329,13 +346,6 @@ const ShareModal = ({ data: initialData, onClose, mood, isOpen, roomId }: ShareM
 const triggerConfetti = () => {
   const canvas = document.createElement('canvas');
 
-  /**
-   * Set the dimensions of the canvas to 0 initially. This is so that
-   * no extra space is taken up by the canvas when it is idle.
-   *
-   * And since we've set the resize flag on confetti to true, it will
-   * auto-resize when required.
-   */
   canvas.width = 0;
   canvas.height = 0;
 
