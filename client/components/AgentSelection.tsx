@@ -91,7 +91,7 @@ export const AgentSelection = ({ onClose, ...props }: AgentSelectionProps) => {
         Choose your mode
       </motion.h2>
 
-      <div className="w-full max-w-4xl flex flex-col md:flex-row items-stretch justify-center gap-8 md:gap-12">
+      <div className="w-full max-w-4xl flex flex-col md:flex-row md:items-start items-center justify-center gap-8 md:gap-12">
         {/* Synthesis (Enthusiastic) */}
         {((isPhone && selectedMood === AgentMoodEnum.EXCITED) || !isPhone) && (
           <PersonaCard
@@ -120,7 +120,7 @@ export const AgentSelection = ({ onClose, ...props }: AgentSelectionProps) => {
             onMoodSelection={updateMood}
             isPhone={isPhone}
             onBack={() => setSelectedMood(null)}
-            delay={0.25}
+            delay={0.15}
           />
         )}
       </div>
@@ -149,7 +149,7 @@ const PersonaCard = ({
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-      className="flex-1 flex flex-col items-center text-center max-w-md mx-auto"
+      className="flex-1 flex flex-col items-center text-center max-w-md mx-auto h-full"
     >
       <div className="mb-8">
         <Image
@@ -170,14 +170,14 @@ const PersonaCard = ({
         {moodConfig.subtitle}
       </p>
 
-      <p className="text-sm md:text-base text-[#8E989C] mb-10 max-w-[320px] font-inter font-light leading-relaxed">
+      <p className="text-sm md:text-base text-[#8E989C] mb-0 flex-1 max-w-[320px] font-inter font-light leading-relaxed">
         {moodConfig.description}
       </p>
 
       <button
         onClick={() => onMoodSelection(mood)}
         className={clsx(
-          'flex items-center justify-center gap-2.5 py-3.5 px-10 rounded-none font-inter font-semibold text-base tracking-[0.1em] uppercase transition-all',
+          'mt-8 flex items-center justify-center gap-2.5 py-3.5 px-10 rounded-none font-inter font-semibold text-base tracking-[0.1em] uppercase transition-all',
           'text-white bg-[#16A34A] hover:bg-[#15803D] active:scale-[0.97]',
           isPhone && 'w-full'
         )}

@@ -10,7 +10,7 @@ export const personaConfig = {
   // OG / SEO
   ogImagePath: '/og-image-1.1.png',
   favicon: {
-    gif: '/favicon_io/favicon.gif',
+    svg: '/favicon_io/favicon.svg',
     ico: '/favicon_io/favicon.ico',
     apple: '/favicon_io/apple-touch-icon.png',
   },
@@ -50,8 +50,7 @@ export const personaConfig = {
     critical: {
       label: 'Tough Love',
       subtitle: 'The tough-love builder mentor.',
-      description:
-        'Demands you understand the fundamentals, challenges every abstraction, & believes great builders explain things simply.',
+      description: 'Demands you understand the fundamentals, challenges every assumption.',
       avatarImage: '/avatars/skeptical.gif',
       accentClass: 'bg-synthesis-dark text-white',
       visualizerVariant: 'synthesis' as const,

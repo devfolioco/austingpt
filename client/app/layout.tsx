@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: personaConfig.favicon.gif, type: 'image/gif' },
+      { url: personaConfig.favicon.svg, type: 'image/svg+xml' },
       { url: personaConfig.favicon.ico, type: 'image/x-icon' },
     ],
     shortcut: { url: personaConfig.favicon.ico },
