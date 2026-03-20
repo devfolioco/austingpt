@@ -243,7 +243,7 @@ export function PaymentGate({ mood, onSessionReady }: PaymentGateProps) {
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                 </motion.div>
-                <span className="text-[#5C686D] font-inter text-sm">Connecting to voice agent\u2026</span>
+                <span className="text-[#5C686D] font-inter text-sm">{'Connecting to voice agent\u2026'}</span>
               </motion.div>
             )}
 

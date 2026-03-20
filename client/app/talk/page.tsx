@@ -1,14 +1,14 @@
 'use client';
 
 import { Button } from '@/components/Button';
+import LoadingPage from '@/components/LoadingPage';
 import { PaymentGate } from '@/components/PaymentGate';
 import { PrefetchPersonaFrameAssets } from '@/components/PersonaFrame';
-import { personaConfig } from '@/config/persona.config';
-import LoadingPage from '@/components/LoadingPage';
 import ShareModal from '@/components/ShareModal';
 import { VoiceAssistant } from '@/components/VoiceAssistant';
 import { MicIcon } from '@/components/icons/MicIcon';
 import { ShareIcon } from '@/components/icons/ShareIcon';
+import { personaConfig } from '@/config/persona.config';
 import useIsPhone from '@/hooks/useIsPhone';
 import { AgentMoodEnum, AgentMoodI, AgentShareData } from '@/types/agent';
 import { RoomContext } from '@livekit/components-react';
@@ -233,6 +233,7 @@ const TalkComponent = () => {
       await room.localParticipant.setMicrophoneEnabled(true);
     } catch (error) {
       console.error('Error connecting to room', error);
+      setConnecting(false);
     }
   }
 
@@ -269,7 +270,7 @@ const TalkComponent = () => {
     return () => {
       console.log('clean up ran');
     };
-  }, [room, mood, paymentComplete]);
+  }, [room, mood, paymentComplete, sessionToken]);
 
   useEffect(() => {
     room.on(RoomEvent.MediaDevicesError, onDeviceFailure);
@@ -310,7 +311,8 @@ const TalkComponent = () => {
         />
         <div className="relative z-10 flex flex-col items-center justify-center gap-4">
           <div className="text-[#171D21] text-lg md:text-2xl font-bold mb-4 px-8 md:px-0 text-center font-inter tracking-[0.05em]">
-            Connecting to {personaConfig.moods[mood === AgentMoodEnum.EXCITED ? 'excited' : 'critical'].connectingLabel}...
+            Connecting to {personaConfig.moods[mood === AgentMoodEnum.EXCITED ? 'excited' : 'critical'].connectingLabel}
+            ...
           </div>
           <div className="w-10 h-10 border-3 border-[#16A34A]/40 border-t-[#16A34A] rounded-full animate-spin"></div>
         </div>

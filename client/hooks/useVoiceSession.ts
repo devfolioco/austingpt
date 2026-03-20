@@ -6,7 +6,6 @@
  * State machine:
  *   DISCONNECTED → WALLET_CONNECTED → SIGNING → PAYMENT_PENDING → SESSION_READY → IN_SESSION → ENDED
  */
-
 import { buildPaymentTypedData, encodePaymentHeader, resolveIntermediaryAddress } from '@/lib/payment';
 import type { X402PaymentHeader } from '@/lib/payment';
 import { useAppKit, useAppKitAccount } from '@reown/appkit/react';
@@ -25,9 +24,9 @@ export type VoiceSessionStep =
   | 'ERROR';
 
 interface VoiceSessionResult {
-  sessionToken: string;
-  expiresIn: number;
-  txHash: string;
+  session_token: string;
+  expires_in: number;
+  tx_hash: string;
 }
 
 // Payment configuration from env
@@ -127,8 +126,13 @@ export function useVoiceSession(): UseVoiceSessionReturn {
       }
 
       const result: VoiceSessionResult = await response.json();
-      setSessionToken(result.sessionToken);
-      setTxHash(result.txHash);
+
+      if (!result.session_token) {
+        throw new Error('No session token in payment response');
+      }
+
+      setSessionToken(result.session_token);
+      setTxHash(result.tx_hash ?? null);
       setStep('SESSION_READY');
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Payment failed';
