@@ -1,9 +1,8 @@
 export const personaConfig = {
   // App identity
-  appName: 'Synthesis',
-  tagline: 'Buidl Something. Ship It. Learn.',
-  description:
-    'An AI trained on Austin Griffith to give you real builder feedback on your project idea. Powered by Ethereum.',
+  appName: 'Austin XBT',
+  tagline: 'Synthesis Agentic Judging',
+  description: 'An AI trained on Austin Griffith to give you real builder feedback on your project idea.',
   siteUrl: 'https://austinxbt.xyz',
   blogUrl: 'https://austingriffith.com',
 
