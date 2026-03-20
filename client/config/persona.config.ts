@@ -20,7 +20,7 @@ export const personaConfig = {
   heroDescription: "Talk to Austin's AI avatar about your project idea and coin it on Zora.",
   heroAvatarImage: '/avatars/mellow.gif',
   heroAvatarAlt: 'Austin Avatar',
-  startChatButtonLabel: 'ASK AUSTIN',
+  startChatButtonLabel: 'TALK WITH AUSTIN',
 
   // Footer
   footer: {
