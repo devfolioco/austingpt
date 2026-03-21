@@ -12,9 +12,7 @@ APP_NAME = "AustinGPT"
 # ---------------------------------------------------------------------------
 # ElevenLabs voice
 # ---------------------------------------------------------------------------
-# Mark - Natural Conversations
-# https://elevenlabs.io/app/voice-library?voiceId=TX3LPaxmHKxFdv7VOQHJ
-DEFAULT_VOICE_ID = "TX3LPaxmHKxFdv7VOQHJ"
+DEFAULT_VOICE_ID = "Ba1aOjE56AbasvjhYEsO"  # Austin Griffith
 VOICE_SPEED = 0.92
 VOICE_STABILITY = 0.3
 VOICE_SIMILARITY_BOOST = 0.7
