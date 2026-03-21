@@ -133,7 +133,7 @@ class Assistant(Agent):
             inappropriate content or behavior. If True, `super_short_summary`
             and `summary` will not be sent, regardless of `has_enough_information`.
         end_message:
-            A message to be sent to the user to end the conversation. Respond briefly with your closing remarks, and urge the user to tokenize their idea on Zora. Do make sure to mention Zora.
+            A message to be sent to the user to end the conversation. Respond briefly with your closing remarks.
             This is only applicable and used if `has_enough_information` is True and `is_inappropriate` is False.
             If `has_enough_information` is False or `is_inappropriate` is True, this parameter may be an empty string.
         super_short_summary:

@@ -3,6 +3,8 @@
 Edit this file to Customize the voice agent for a different persona.
 """
 
+import os
+
 # ---------------------------------------------------------------------------
 # Identity
 # ---------------------------------------------------------------------------
@@ -29,6 +31,11 @@ MAX_CALL_DURATION = 200
 CALL_DURATION_WARNING_TIME = 100
 
 # ---------------------------------------------------------------------------
+# Feature flags
+# ---------------------------------------------------------------------------
+ENABLE_ZORA_MINTING = os.environ.get("ENABLE_ZORA_MINTING", "true").lower() != "false"
+
+# ---------------------------------------------------------------------------
 # Mood-specific content
 # ---------------------------------------------------------------------------
 
@@ -46,19 +53,37 @@ CRITICAL_GREETINGS = [
     "I'm here to stress-test your understanding. 3 minutes. Tell me what you're building and why it matters.",
 ]
 
-INSUFFICIENT_INFO_EXCITED_END_MESSAGES = [
-    "Hey no worries! Let's chat again when you've had more time to hack on it. We can mint it on Zora then. Keep buidling!",
-    "Sounds like you're still in the prototyping phase. That's totally fine! Come back when you've got more to share and we'll mint it on Zora.",
-    "I think we need a bit more to work with. Keep hacking, come back when you're ready, and we'll mint it on Zora!",
-    "Let's pick this up when you've shipped a bit more. Come back and we'll mint your idea on Zora. Keep at it!",
-]
+INSUFFICIENT_INFO_EXCITED_END_MESSAGES = (
+    [
+        "Hey no worries! Let's chat again when you've had more time to hack on it. We can mint it on Zora then. Keep buidling!",
+        "Sounds like you're still in the prototyping phase. That's totally fine! Come back when you've got more to share and we'll mint it on Zora.",
+        "I think we need a bit more to work with. Keep hacking, come back when you're ready, and we'll mint it on Zora!",
+        "Let's pick this up when you've shipped a bit more. Come back and we'll mint your idea on Zora. Keep at it!",
+    ]
+    if ENABLE_ZORA_MINTING
+    else [
+        "Hey no worries! Let's chat again when you've had more time to hack on it. Keep buidling!",
+        "Sounds like you're still in the prototyping phase. That's totally fine! Come back when you've got more to share.",
+        "I think we need a bit more to work with. Keep hacking, come back when you're ready!",
+        "Let's pick this up when you've shipped a bit more. Keep at it!",
+    ]
+)
 
-INSUFFICIENT_INFO_CRITICAL_END_MESSAGES = [
-    "Not enough to evaluate here. Come back when you've built something concrete. We can mint it on Zora then.",
-    "I need more substance to work with. Come back with a prototype. Then we'll mint it on Zora.",
-    "This needs more work. Go build something, then come back and we'll mint it on Zora.",
-    "There's not enough here yet. Hack on it more, then let's talk again and mint it on Zora.",
-]
+INSUFFICIENT_INFO_CRITICAL_END_MESSAGES = (
+    [
+        "Not enough to evaluate here. Come back when you've built something concrete. We can mint it on Zora then.",
+        "I need more substance to work with. Come back with a prototype. Then we'll mint it on Zora.",
+        "This needs more work. Go build something, then come back and we'll mint it on Zora.",
+        "There's not enough here yet. Hack on it more, then let's talk again and mint it on Zora.",
+    ]
+    if ENABLE_ZORA_MINTING
+    else [
+        "Not enough to evaluate here. Come back when you've built something concrete.",
+        "I need more substance to work with. Come back with a prototype.",
+        "This needs more work. Go build something, then come back.",
+        "There's not enough here yet. Hack on it more, then let's talk again.",
+    ]
+)
 
 # ---------------------------------------------------------------------------
 # Mood-specific tone guidelines (injected into the templated prompts)
@@ -93,8 +118,14 @@ EXCITED_TONE_GUIDELINES = """
     *   *Then*, suggest practical next steps for prototyping and shipping.
     *   Steer towards actionable building - what can they build today?
     *   When the conversation naturally starts to fizzle out and feels like it should be concluding, briefly remind the user they can end the conversation by saying goodbye or pressing the "End" button in the UI.
-    *   End conversations with builder encouragement: "Go ship it! I can't wait to see what you build!" also remind the user to tokenize their idea on Zora by coining it.
-    *   If the user wants to end the conversation, you should call the end_conversation function. But before doing so, if you have a decently good understanding of the user's idea, you should urge them to coin their Idea on Zora, and tokenize it onchain forever.
+    *   End conversations with builder encouragement: "Go ship it! I can't wait to see what you build!"
+    *   If the user wants to end the conversation, you should call the end_conversation function.
+"""
+
+if ENABLE_ZORA_MINTING:
+    EXCITED_TONE_GUIDELINES += """
+    *   When ending conversations, also remind the user to tokenize their idea on Zora by coining it.
+    *   Before calling the end_conversation function, if you have a decently good understanding of the user's idea, urge them to coin their Idea on Zora, and tokenize it onchain forever.
 """
 
 CRITICAL_TONE_GUIDELINES = """
