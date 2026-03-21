@@ -1,14 +1,14 @@
 'use client';
 
 import { personaConfig } from '@/config/persona.config';
-import { useVoiceSession, type VoiceSessionStep } from '@/hooks/useVoiceSession';
+import { type VoiceSessionStep, useVoiceSession } from '@/hooks/useVoiceSession';
+import type { AgentMoodI } from '@/types/agent';
+import { AgentMoodEnum } from '@/types/agent';
 import { useAppKitAccount } from '@reown/appkit/react';
 import clsx from 'clsx';
 import { AnimatePresence, motion } from 'framer-motion';
 import Image from 'next/image';
 import { useEffect } from 'react';
-import type { AgentMoodI } from '@/types/agent';
-import { AgentMoodEnum } from '@/types/agent';
 
 const PAYMENT_AMOUNT = process.env.NEXT_PUBLIC_PAYMENT_DEFAULT_AMOUNT ?? '1.00';
 
@@ -107,6 +107,15 @@ export function PaymentGate({ mood, onSessionReady }: PaymentGateProps) {
           </span>
         </motion.div>
 
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.35, duration: 0.3 }}
+          className="mt-2 text-[#B4BEC0] font-inter text-xs"
+        >
+          Covers the cost of AI compute for your session.
+        </motion.p>
+
         {/* Status line */}
         <motion.p
           initial={{ opacity: 0 }}
@@ -129,43 +138,29 @@ export function PaymentGate({ mood, onSessionReady }: PaymentGateProps) {
 
         {/* Progress dots */}
         <div className="mt-4 flex gap-2 items-center">
-          {(['DISCONNECTED', 'WALLET_CONNECTED', 'SIGNING', 'SESSION_READY'] as const).map(
-            (s, i) => {
-              const stepOrder = ['DISCONNECTED', 'WALLET_CONNECTED', 'SIGNING', 'SESSION_READY'];
-              const currentIndex = stepOrder.indexOf(
-                step === 'PAYMENT_PENDING' ? 'SIGNING' : step === 'ERROR' ? 'WALLET_CONNECTED' : step
-              );
-              const isActive = i <= currentIndex;
-              const isCurrent = i === currentIndex;
+          {(['DISCONNECTED', 'WALLET_CONNECTED', 'SIGNING', 'SESSION_READY'] as const).map((s, i) => {
+            const stepOrder = ['DISCONNECTED', 'WALLET_CONNECTED', 'SIGNING', 'SESSION_READY'];
+            const currentIndex = stepOrder.indexOf(
+              step === 'PAYMENT_PENDING' ? 'SIGNING' : step === 'ERROR' ? 'WALLET_CONNECTED' : step
+            );
+            const isActive = i <= currentIndex;
+            const isCurrent = i === currentIndex;
 
-              return (
-                <motion.div
-                  key={s}
-                  className={clsx(
-                    'rounded-full transition-all duration-300',
-                    isCurrent && isLoading
-                      ? 'w-6 h-2'
-                      : isActive
-                        ? 'w-2 h-2'
-                        : 'w-1.5 h-1.5'
-                  )}
-                  style={{
-                    backgroundColor: isActive ? '#16A34A' : 'rgba(0,0,0,0.12)',
-                  }}
-                  animate={
-                    isCurrent && isLoading
-                      ? { opacity: [0.5, 1, 0.5] }
-                      : {}
-                  }
-                  transition={
-                    isCurrent && isLoading
-                      ? { repeat: Infinity, duration: 1.2, ease: 'easeInOut' }
-                      : {}
-                  }
-                />
-              );
-            }
-          )}
+            return (
+              <motion.div
+                key={s}
+                className={clsx(
+                  'rounded-full transition-all duration-300',
+                  isCurrent && isLoading ? 'w-6 h-2' : isActive ? 'w-2 h-2' : 'w-1.5 h-1.5'
+                )}
+                style={{
+                  backgroundColor: isActive ? '#16A34A' : 'rgba(0,0,0,0.12)',
+                }}
+                animate={isCurrent && isLoading ? { opacity: [0.5, 1, 0.5] } : {}}
+                transition={isCurrent && isLoading ? { repeat: Infinity, duration: 1.2, ease: 'easeInOut' } : {}}
+              />
+            );
+          })}
         </div>
 
         {/* Action area */}
@@ -239,7 +234,17 @@ export function PaymentGate({ mood, onSessionReady }: PaymentGateProps) {
                   transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                   className="w-12 h-12 rounded-full flex items-center justify-center bg-[#16A34A]"
                 >
-                  <svg className="text-white" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                  <svg
+                    className="text-white"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                 </motion.div>

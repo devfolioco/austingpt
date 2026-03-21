@@ -1,4 +1,5 @@
 import { storeZoraCoin } from '@/api';
+import { isZoraMintingEnabled } from '@/config/persona.config';
 import { config as wagmiConfig } from '@/config/wagmi';
 import { uploadToIPFS } from '@/helpers/ipfs';
 import { ZoraCoinFlowStep, ZoraCoinResult } from '@/types/agent';
@@ -49,14 +50,24 @@ const test = false;
  * @returns {UseCoinOnZoraReturn} Object containing coin creation state and controls
  */
 
-const useCoinOnZora = ({
+const noopReturn: UseCoinOnZoraReturn = {
+  onClick: () => {},
+  isDisabled: true,
+  isLoading: false,
+  result: null,
+  status: ZoraCoinFlowStep.IDLE,
+};
+
+const useCoinOnZora = isZoraMintingEnabled ? useCoinOnZoraImpl : (): UseCoinOnZoraReturn => noopReturn;
+
+function useCoinOnZoraImpl({
   roomId,
   title,
   description,
   base64Image,
   onSuccess: successCallback,
   onFailure: failureCallback,
-}: UseCoinOnZoraProps): UseCoinOnZoraReturn => {
+}: UseCoinOnZoraProps): UseCoinOnZoraReturn {
   const { open } = useAppKit();
   const { address, isConnected } = useAppKitAccount();
   const { open: isOpen } = useAppKitState();
@@ -219,6 +230,6 @@ const useCoinOnZora = ({
     result: currentStep === ZoraCoinFlowStep.SUCCESS ? zoraResult.current : null,
     status: currentStep,
   };
-};
+}
 
 export { useCoinOnZora };
