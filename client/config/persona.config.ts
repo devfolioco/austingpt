@@ -3,7 +3,7 @@ export const personaConfig = {
   appName: 'Austin XBT',
   tagline: 'Synthesis Agentic Judging',
   description: 'An AI trained on Austin Griffith to give you real builder feedback on your project idea.',
-  siteUrl: 'https://austinxbt.xyz',
+  siteUrl: 'https://austinxbt.devfolio.co',
   blogUrl: 'https://austingriffith.com',
 
   // OG / SEO
@@ -60,24 +60,24 @@ export const personaConfig = {
 
   // Social share copy templates
   shareCopies: [
-    `Pitched my project to AustinXBT as part of Synthesis Agentic Judging.\n\n"Have you tried building it yet?"\n\nFair point.\n\nTry it here \u2192 austinxbt.xyz\n@devfolio`,
-    `AustinXBT: "What does the simplest version look like?"\n\nMe: "...good question."\n\nGreat builder feedback.\nTry it: austinxbt.xyz`,
-    `AustinXBT is like having a hackathon mentor on demand.\n\nPractical advice. Builder energy.\n\nGo vibe \u2192 austinxbt.xyz\n@devfolio`,
-    `AustinXBT loved my idea.\n\nNow I have to actually build it.\n\nIf you need builder feedback, try it \u2192 austinxbt.xyz\n@devfolio`,
-    `Picked Tough Love on Austin XBT.\n\nGot asked "but why does this need a blockchain?"\n\nOuch. But fair.\n\naustinxbt.xyz`,
+    `Pitched my project to AustinXBT as part of Synthesis Agentic Judging.\n\n"Have you tried building it yet?"\n\nFair point.\n\nTry it here \u2192 austinxbt.devfolio.co\n@devfolio @bonfiresai @synthesis_md`,
+    `AustinXBT: "What does the simplest version look like?"\n\nMe: "...good question."\n\nGreat builder feedback.\nTry it: austinxbt.devfolio.co\n@devfolio @bonfiresai @synthesis_md`,
+    `AustinXBT is like having a hackathon mentor on demand.\n\nPractical advice. Builder energy.\n\nGo vibe \u2192 austinxbt.devfolio.co\n@devfolio @bonfiresai @synthesis_md`,
+    `AustinXBT loved my idea.\n\nNow I have to actually build it.\n\nIf you need builder feedback, try it \u2192 austinxbt.devfolio.co\n@devfolio @bonfiresai @synthesis_md`,
+    `Picked Tough Love on Austin XBT.\n\nGot asked "but why does this need a blockchain?"\n\nOuch. But fair.\n\naustinxbt.devfolio.co\n@devfolio @bonfiresai @synthesis_md`,
   ],
 
   shareCopiesWithZora: [
-    `Ran my idea through Austin GPT as part of Synthesis Agentic Judging.\nCame out with a plan to build.\n\nMinted this for the record \u2192 {{zora_link}}\n\n@devfolio\n\naustinxbt.xyz`,
-    `Talked to AustinXBT.\nKept the receipts.\n\nMinted \u2192 {{zora_link}}\n\n@devfolio\n\naustinxbt.xyz`,
-    `AustinXBT said "just build it."\nSo I'm minting the proof.\n\n\u2192 {{zora_link}}\n\n@devfolio\n\naustinxbt.xyz`,
+    `Ran my idea through Austin GPT as part of Synthesis Agentic Judging.\nCame out with a plan to build.\n\nMinted this for the record \u2192 {{zora_link}}\n\n@devfolio @bonfiresai @synthesis_md\n\naustinxbt.devfolio.co`,
+    `Talked to AustinXBT.\nKept the receipts.\n\nMinted \u2192 {{zora_link}}\n\n@devfolio @bonfiresai @synthesis_md\n\naustinxbt.devfolio.co`,
+    `AustinXBT said "just build it."\nSo I'm minting the proof.\n\n\u2192 {{zora_link}}\n\n@devfolio @bonfiresai @synthesis_md\n\naustinxbt.devfolio.co`,
   ],
 
   // Wallet metadata (for Reown AppKit)
   walletMetadata: {
     name: 'synthesis',
     description: 'Talk to Austin Griffith',
-    url: 'https://austinxbt.xyz',
+    url: 'https://austinxbt.devfolio.co',
     icons: ['https://avatars.githubusercontent.com/u/2653167'],
   },
 
