@@ -83,8 +83,7 @@ export const personaConfig = {
 
   // Share frame
   shareFrame: {
-    title: 'Ethereum',
-    subtitle: 'is for',
+    prompt: '> synthesizing_',
     excitedAvatarImage: '/frame/austin-t-excited.png',
     criticalAvatarImage: '/frame/austin-t-critical.png',
   },

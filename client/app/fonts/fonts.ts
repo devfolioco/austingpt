@@ -1,4 +1,4 @@
-import { Inter } from 'next/font/google';
+import { Inconsolata, Inter } from 'next/font/google';
 import localFont from 'next/font/local';
 
 export const nyghtRegular = localFont({
@@ -17,3 +17,10 @@ export const nyghtMedium = localFont({
 });
 
 export const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
+
+export const inconsolata = Inconsolata({ subsets: ['latin'], variable: '--font-inconsolata' });
+
+export const drukCondSuper = localFont({
+  src: '../fonts/DrukCond-Super.woff2',
+  display: 'swap',
+});

@@ -1,8 +1,7 @@
-import { nyghtMedium } from '@/app/fonts/fonts';
+import { drukCondSuper, inconsolata, nyghtMedium } from '@/app/fonts/fonts';
 import { personaConfig } from '@/config/persona.config';
 import { AgentMoodI } from '@/types/agent';
 import { useEffect, useRef } from 'react';
-import rough from 'roughjs';
 
 interface PersonaFrameProps {
   idea: string;
@@ -15,7 +14,13 @@ interface PersonaFrameProps {
 const frameWidth = 650;
 const frameHeight = 340;
 
-const MAX_IDEA_WIDTH = 380;
+const MAX_IDEA_WIDTH = 460;
+
+const GREEN = '#16A34A';
+const BG = '#FAFAFA';
+const TEXT_DARK = '#111111';
+const TEXT_MID = '#6B7280';
+const INCONSOLATA = `${inconsolata.style.fontFamily}, monospace`;
 
 function resizeCanvas(canvas: HTMLCanvasElement) {
   const { devicePixelRatio: ratio = 1 } = window;
@@ -30,8 +35,8 @@ function resizeCanvas(canvas: HTMLCanvasElement) {
 
 const drawDotPattern = (ctx: CanvasRenderingContext2D, width: number, height: number) => {
   const spacing = 18;
-  const radius = 1;
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.10)';
+  const radius = 0.8;
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.06)';
 
   for (let x = spacing / 2; x < width; x += spacing) {
     for (let y = spacing / 2; y < height; y += spacing) {
@@ -40,43 +45,6 @@ const drawDotPattern = (ctx: CanvasRenderingContext2D, width: number, height: nu
       ctx.fill();
     }
   }
-};
-
-const drawRoughEllipse = (
-  canvasElement: HTMLCanvasElement,
-  width: number,
-  height: number,
-  {
-    ideaTextWidth,
-    ideaCenterY,
-  }: {
-    ideaTextWidth: number;
-    ideaCenterY: number;
-  }
-) => {
-  const rc = rough.canvas(canvasElement);
-  const centerX = width / 2;
-  const ellipseWidth = ideaTextWidth + 70;
-  const ellipseHeight = 90;
-
-  const jitter = 8;
-  const roughness = 1;
-
-  rc.ellipse(centerX, ideaCenterY, ellipseWidth, ellipseHeight, {
-    stroke: '#16A34A',
-    strokeWidth: 3,
-    roughness,
-  });
-  rc.ellipse(centerX + jitter, ideaCenterY - 2, ellipseWidth, ellipseHeight, {
-    stroke: '#16A34A',
-    strokeWidth: 1.5,
-    roughness,
-  });
-  rc.ellipse(centerX - jitter, ideaCenterY + 3, ellipseWidth, ellipseHeight, {
-    stroke: '#16A34A',
-    strokeWidth: 1.5,
-    roughness,
-  });
 };
 
 const drawFrame = async (
@@ -92,57 +60,67 @@ const drawFrame = async (
 
   if (!ctx) return;
 
-  // Background
-  ctx.fillStyle = '#F5F5F5';
+  // === BACKGROUND ===
+  ctx.fillStyle = BG;
   ctx.fillRect(0, 0, width, height);
 
-  // Halftone dot pattern
+  // Subtle dot grid
   drawDotPattern(ctx, width, height);
 
-  // Decorative top accent line
-  ctx.fillStyle = '#16A34A';
-  ctx.fillRect(width / 2 - 30, 28, 60, 2);
+  // === TOP: PROMPT LINE ===
+  ctx.textAlign = 'left';
+  ctx.fillStyle = GREEN;
+  ctx.font = `500 12px ${INCONSOLATA}`;
+  ctx.fillText(personaConfig.shareFrame.prompt, 36, 44);
 
-  // Title: "Ethereum"
+  // Small green accent bar top-left
+  ctx.fillStyle = GREEN;
+  ctx.fillRect(36, 54, 24, 2);
+
+  // === "Ethereum is for" MOTIF ===
   ctx.textAlign = 'center';
-  ctx.fillStyle = '#171D21';
-  ctx.font = `bold 52px ${nyghtMedium.style.fontFamily}`;
-  ctx.fillText(personaConfig.shareFrame.title, width / 2, height / 3 - 10);
+  ctx.fillStyle = TEXT_MID;
+  ctx.font = `400 16px ${INCONSOLATA}`;
+  const motifY = height / 2 - 30;
+  ctx.fillText('Ethereum is for', width / 2, motifY);
 
-  // Subtitle: "is for"
-  ctx.font = `normal 36px ${nyghtMedium.style.fontFamily}`;
-  ctx.fillStyle = '#5C686D';
-  ctx.fillText(personaConfig.shareFrame.subtitle, width / 2, height / 3 + 35);
-
-  // Idea text — measure and scale
-  ctx.font = `bold 50px ${nyghtMedium.style.fontFamily}`;
-  const expectedIdeaTextWidth = ctx.measureText(idea).width;
+  // === IDEA TEXT (Druk Condensed Super — uppercase, bold, condensed) ===
+  const ideaUpper = idea.toUpperCase();
+  ctx.font = `900 64px ${drukCondSuper.style.fontFamily}`;
+  const expectedIdeaTextWidth = ctx.measureText(ideaUpper).width;
   const scaleDownRatio = expectedIdeaTextWidth > MAX_IDEA_WIDTH ? MAX_IDEA_WIDTH / expectedIdeaTextWidth : 1;
-  const ideaFontSize = 50 * scaleDownRatio;
+  const ideaFontSize = 64 * scaleDownRatio;
 
-  ctx.font = `bold ${ideaFontSize}px ${nyghtMedium.style.fontFamily}`;
-  const ideaTextWidth = ctx.measureText(idea).width;
+  ctx.font = `900 ${ideaFontSize}px ${drukCondSuper.style.fontFamily}`;
+  const ideaTextWidth = ctx.measureText(ideaUpper).width;
 
-  const ideaY = height / 3 + (110 - (1 - scaleDownRatio) * 14);
-  ctx.fillStyle = '#171D21';
-  ctx.fillText(idea, width / 2, ideaY);
+  const ideaX = width / 2;
+  const ideaY = height / 2 + 30;
 
-  // Draw rough ellipses around the idea
-  drawRoughEllipse(canvasElement, frameWidth, frameHeight, {
-    ideaTextWidth,
-    ideaCenterY: ideaY - ideaFontSize * 0.25,
-  });
+  // Idea text in dark
+  ctx.textAlign = 'center';
+  ctx.fillStyle = TEXT_DARK;
+  ctx.fillText(ideaUpper, ideaX, ideaY);
 
-  // Bottom branding: "SYNTHESIS" in small caps
-  ctx.font = '500 10px Inter, system-ui, sans-serif';
-  ctx.fillStyle = '#B4BEC0';
+  // Green underline — single clean line
+  const underlineWidth = ideaTextWidth + 16;
+  ctx.fillStyle = GREEN;
+  ctx.fillRect(ideaX - underlineWidth / 2, ideaY + 12, underlineWidth, 4);
+
+  // === BOTTOM BRANDING ===
+  ctx.font = `600 9px ${INCONSOLATA}`;
+  ctx.fillStyle = GREEN;
   ctx.textAlign = 'right';
   ctx.letterSpacing = '3px';
-  ctx.fillText('S Y N T H E S I S', width - 24, height - 18);
+  ctx.fillText('S Y N T H E S I S', width - 32, height - 24);
 
-  // Bottom-left accent mark
-  ctx.fillStyle = '#16A34A';
-  ctx.fillRect(24, height - 24, 20, 2);
+  // Bottom-left small accent + domain below
+  ctx.fillStyle = GREEN;
+  ctx.fillRect(36, height - 32, 16, 2);
+  ctx.font = `400 9px ${INCONSOLATA}`;
+  ctx.fillStyle = '#B0B7BC';
+  ctx.textAlign = 'left';
+  ctx.fillText('austinxbt.devfolio.co', 36, height - 18);
 };
 
 const PersonaFrame = ({ idea, onImageReady, onError, mood, className }: PersonaFrameProps) => {
@@ -151,7 +129,7 @@ const PersonaFrame = ({ idea, onImageReady, onError, mood, className }: PersonaF
   const handleDownload = () => {
     if (canvasRef.current) {
       const link = document.createElement('a');
-      link.download = `ethereum-is-for-${idea.toLowerCase().replace(' ', '-')}.png`;
+      link.download = `synthesis-${idea.toLowerCase().replace(/\s+/g, '-')}.png`;
       link.href = canvasRef.current.toDataURL('image/png');
       document.body.appendChild(link);
       link.click();
@@ -206,7 +184,7 @@ const PersonaFrame = ({ idea, onImageReady, onError, mood, className }: PersonaF
       ref={canvasRef}
       width={frameWidth}
       height={frameHeight}
-      className={`w-full h-full ${nyghtMedium.className} ${className}`}
+      className={`w-full h-full ${drukCondSuper.className} ${inconsolata.className} ${nyghtMedium.className} ${className}`}
     ></canvas>
   );
 };

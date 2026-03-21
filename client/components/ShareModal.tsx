@@ -154,6 +154,22 @@ const ShareModal = ({ data: initialData, onClose, mood, isOpen, roomId }: ShareM
 
   const [zoraSuccessToastVisible, setZoraToastVisible] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [imageCopied, setImageCopied] = useState(false);
+
+  const handleCopyImage = async () => {
+    if (!ideaImageRef.current || editMode) return;
+
+    try {
+      const res = await fetch(ideaImageRef.current);
+      const blob = await res.blob();
+      const pngBlob = new Blob([blob], { type: 'image/png' });
+      await navigator.clipboard.write([new ClipboardItem({ 'image/png': pngBlob })]);
+      setImageCopied(true);
+      setTimeout(() => setImageCopied(false), 1600);
+    } catch {
+      // Fallback: silently fail if clipboard API isn't available
+    }
+  };
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -226,14 +242,70 @@ const ShareModal = ({ data: initialData, onClose, mood, isOpen, roomId }: ShareM
             )}
 
             <div className="flex flex-col items-start md:rounded-lg md:overflow-hidden w-full">
-              <div className="relative w-full">
-                <PersonaFrame
-                  idea={data.oneLiner}
-                  mood={mood}
-                  onImageReady={onImageReady}
-                  onError={handleFrameError}
-                  className="rounded-lg md:rounded-none mb-4 md:mb-0"
-                />
+              <div className="relative w-full group">
+                <div
+                  onClick={handleCopyImage}
+                  className={clsx(
+                    'cursor-pointer transition-transform duration-150 active:scale-[0.985]',
+                    editMode && 'pointer-events-none'
+                  )}
+                >
+                  <PersonaFrame
+                    idea={data.oneLiner}
+                    mood={mood}
+                    onImageReady={onImageReady}
+                    onError={handleFrameError}
+                    className="rounded-lg md:rounded-none mb-4 md:mb-0"
+                  />
+                </div>
+
+                {/* Copy feedback overlay */}
+                <AnimatePresence>
+                  {imageCopied && (
+                    <motion.div
+                      className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-lg md:rounded-none pointer-events-none"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.15 }}
+                    >
+                      <motion.div
+                        className="flex items-center gap-2 bg-white rounded-full px-5 py-2.5 shadow-lg"
+                        initial={{ scale: 0.7, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0.9, opacity: 0 }}
+                        transition={{ type: 'spring', stiffness: 500, damping: 25 }}
+                      >
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                          <motion.path
+                            d="M3 8.5L6.5 12L13 4"
+                            stroke="#16A34A"
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            initial={{ pathLength: 0 }}
+                            animate={{ pathLength: 1 }}
+                            transition={{ duration: 0.3, delay: 0.1 }}
+                          />
+                        </svg>
+                        <span className="text-sm font-medium text-[#111] font-inter">Copied</span>
+                      </motion.div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* "Click to copy" hint on hover */}
+                {!editMode && !imageCopied && (
+                  <div className="absolute top-3 right-3 md:top-4 md:right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+                    <div className="flex items-center gap-1.5 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1.5">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                      </svg>
+                      <span className="text-[11px] text-white font-inter font-medium">Copy image</span>
+                    </div>
+                  </div>
+                )}
 
                 {!editMode && (
                   <button
