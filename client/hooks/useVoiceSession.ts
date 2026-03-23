@@ -6,7 +6,7 @@
  * State machine:
  *   DISCONNECTED → WALLET_CONNECTED → SIGNING → PAYMENT_PENDING → SESSION_READY → IN_SESSION → ENDED
  */
-import { buildPaymentTypedData, encodePaymentHeader, resolveIntermediaryAddress } from '@/lib/payment';
+import { buildPaymentTypedData, encodePaymentHeader, fetchPaymentConfig } from '@/lib/payment';
 import type { X402PaymentHeader } from '@/lib/payment';
 import { useAppKit, useAppKitAccount } from '@reown/appkit/react';
 import { useCallback, useState } from 'react';
@@ -29,16 +29,14 @@ interface VoiceSessionResult {
   tx_hash: string;
 }
 
-// Payment configuration from env
-const PAYMENT_NETWORK = process.env.NEXT_PUBLIC_PAYMENT_NETWORK ?? 'base';
-const INTERMEDIARY_OVERRIDE = process.env.NEXT_PUBLIC_ONCHAINFI_INTERMEDIARY_ADDRESS ?? null;
+// Payment configuration from env (used as fallback if server config fetch fails)
 const DELVE_API_URL = process.env.NEXT_PUBLIC_DELVE_API_URL ?? '';
 const PAYMENT_AGENT_ID = process.env.NEXT_PUBLIC_PAYMENT_AGENT_ID ?? '';
 
-const PAYMENT_CONFIG = {
+const FALLBACK_CONFIG = {
   tokenAddress: process.env.NEXT_PUBLIC_PAYMENT_TOKEN_ADDRESS ?? '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
-  intermediaryAddress: resolveIntermediaryAddress(PAYMENT_NETWORK, INTERMEDIARY_OVERRIDE),
-  network: PAYMENT_NETWORK,
+  recipientAddress: process.env.NEXT_PUBLIC_ONCHAINFI_INTERMEDIARY_ADDRESS ?? '',
+  network: process.env.NEXT_PUBLIC_PAYMENT_NETWORK ?? 'base',
   chainId: parseInt(process.env.NEXT_PUBLIC_CHAIN_ID ?? '8453', 10),
   amount: process.env.NEXT_PUBLIC_PAYMENT_DEFAULT_AMOUNT ?? '1.00',
 };
@@ -84,14 +82,27 @@ export function useVoiceSession(): UseVoiceSessionReturn {
     try {
       setError(null);
 
-      // Step 1: Sign EIP-712 payment authorization
+      // Step 1: Fetch payment config from server
       setStep('SIGNING');
+      let recipientAddress = FALLBACK_CONFIG.recipientAddress;
+      let tokenAddress = FALLBACK_CONFIG.tokenAddress;
+      let network = FALLBACK_CONFIG.network;
+      try {
+        const serverConfig = await fetchPaymentConfig();
+        recipientAddress = serverConfig.payTo;
+        tokenAddress = serverConfig.asset || tokenAddress;
+        network = serverConfig.network || network;
+      } catch (fetchErr) {
+        console.warn('Failed to fetch payment config from server, using fallback:', fetchErr);
+      }
+
+      // Step 2: Sign EIP-712 payment authorization
       const typedData = buildPaymentTypedData({
-        tokenAddress: PAYMENT_CONFIG.tokenAddress,
-        recipientAddress: PAYMENT_CONFIG.intermediaryAddress,
-        amount: PAYMENT_CONFIG.amount,
-        network: PAYMENT_CONFIG.network,
-        chainId: PAYMENT_CONFIG.chainId,
+        tokenAddress,
+        recipientAddress,
+        amount: FALLBACK_CONFIG.amount,
+        network,
+        chainId: FALLBACK_CONFIG.chainId,
         userAddress: address,
       });
 
@@ -105,10 +116,10 @@ export function useVoiceSession(): UseVoiceSessionReturn {
       const paymentHeader: X402PaymentHeader = encodePaymentHeader(
         typedData.message,
         signature,
-        PAYMENT_CONFIG.network
+        network
       );
 
-      // Step 2: Send to Delve for verification + settlement
+      // Step 3: Send to Delve for verification + settlement
       setStep('PAYMENT_PENDING');
       const response = await fetch(`${DELVE_API_URL}/paid/voice/session`, {
         method: 'POST',
@@ -116,7 +127,7 @@ export function useVoiceSession(): UseVoiceSessionReturn {
         body: JSON.stringify({
           payment_header: paymentHeader,
           agent_id: PAYMENT_AGENT_ID,
-          expected_amount: PAYMENT_CONFIG.amount,
+          expected_amount: FALLBACK_CONFIG.amount,
         }),
       });
 
