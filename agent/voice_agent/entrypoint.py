@@ -165,7 +165,7 @@ async def entrypoint(ctx: JobContext):  # noqa: C901 – keep high complexity fo
     # ------------------------------------------------------------------
     session = AgentSession(
         stt=deepgram.STT(model="nova-3", language="en-US", keyterms=stt_words),
-        llm=openai.LLM(model="gpt-4.1"),
+        llm=openai.LLM(model="gpt-5.4-mini"),
         tts=elevenlabs.TTS(
             model="eleven_multilingual_v2",
             voice_id=os.environ.get("ELEVEN_VOICE_ID", ELEVENLABS_DEFAULT_VOICE_ID),
